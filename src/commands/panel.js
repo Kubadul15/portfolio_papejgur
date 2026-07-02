@@ -12,6 +12,7 @@ const {
   buildExamPanelEmbed,
   buildVehiclePanelEmbed,
   buildTicketPanelEmbed,
+  buildApplicationPanelEmbed,
 } = require('../utils/embeds');
 const {
   CREATE_ID_BUTTON_ID,
@@ -19,6 +20,7 @@ const {
   EXAM_START_PREFIX,
   VEHICLE_START_PREFIX,
   TICKET_CREATE_PREFIX,
+  APP_START_PREFIX,
 } = require('../interactions/constants');
 
 module.exports = {
@@ -117,6 +119,37 @@ module.exports = {
             .setName('rola-obslugi')
             .setDescription('Rola widząca nowe tickety i mogąca je przyjmować/zamykać')
             .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('rekrutacja')
+        .setDescription('Wysyła panel podań o dołączenie do serwera')
+        .addChannelOption((option) =>
+          option
+            .setName('kanal')
+            .setDescription('Kanał, na który zostanie wysłany panel rekrutacji')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(true)
+        )
+        .addChannelOption((option) =>
+          option
+            .setName('kategoria')
+            .setDescription('Kategoria, w której będą tworzone kanały podań')
+            .addChannelTypes(ChannelType.GuildCategory)
+            .setRequired(true)
+        )
+        .addRoleOption((option) =>
+          option
+            .setName('rola-obslugi')
+            .setDescription('Rola widząca podania i mogąca je rozpatrywać')
+            .setRequired(true)
+        )
+        .addRoleOption((option) =>
+          option
+            .setName('ranga-po-akceptacji')
+            .setDescription('Opcjonalna rola nadawana automatycznie po przyjęciu podania')
+            .setRequired(false)
         )
     ),
 
@@ -230,6 +263,36 @@ module.exports = {
       }
 
       await interaction.reply({ content: `✅ Panel ticketów wysłany na ${channel}.`, ephemeral: true });
+      return;
+    }
+
+    if (subcommand === 'rekrutacja') {
+      const channel = interaction.options.getChannel('kanal');
+      const category = interaction.options.getChannel('kategoria');
+      const supportRole = interaction.options.getRole('rola-obslugi');
+      const acceptRole = interaction.options.getRole('ranga-po-akceptacji');
+
+      const embed = buildApplicationPanelEmbed(supportRole);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${APP_START_PREFIX}:${category.id}:${supportRole.id}:${acceptRole ? acceptRole.id : ''}`)
+          .setLabel('Napisz podanie')
+          .setEmoji('📝')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      try {
+        await channel.send({ embeds: [embed], components: [row] });
+      } catch (error) {
+        console.error('Błąd podczas wysyłania panelu rekrutacji:', error);
+        await interaction.reply({
+          content: `❌ Nie udało się wysłać panelu na ${channel}. Sprawdź, czy bot ma tam uprawnienia do wysyłania wiadomości.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.reply({ content: `✅ Panel rekrutacji wysłany na ${channel}.`, ephemeral: true });
     }
   },
 };

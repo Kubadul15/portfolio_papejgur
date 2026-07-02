@@ -2,16 +2,8 @@ const { ChannelType, PermissionFlagsBits } = require('discord.js');
 const { buildTicketTopic, parseTicketTopic, buildTicketActionRow } = require('../utils/ticket');
 const { buildTicketEmbed } = require('../utils/embeds');
 const { sendAdminLog } = require('../utils/adminLog');
+const { buildSlugChannelName } = require('../utils/channelName');
 const { TICKET_MODAL_PREFIX, MODAL_FIELD_TICKET_REASON } = require('./constants');
-
-function buildTicketChannelName(username) {
-  const sanitized = username
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-  return `ticket-${sanitized || 'user'}`.slice(0, 90);
-}
 
 async function handleTicketModal(interaction) {
   await interaction.deferReply({ ephemeral: true });
@@ -38,7 +30,7 @@ async function handleTicketModal(interaction) {
   let ticketChannel;
   try {
     ticketChannel = await interaction.guild.channels.create({
-      name: buildTicketChannelName(interaction.user.username),
+      name: buildSlugChannelName('ticket', interaction.user.username),
       type: ChannelType.GuildText,
       parent: categoryId,
       topic: buildTicketTopic({ ownerId: interaction.user.id, supportRoleId }),

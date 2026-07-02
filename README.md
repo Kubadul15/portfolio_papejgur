@@ -63,6 +63,25 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępne pane
   Cały stan ticketu (właściciel, rola obsługi, kto przyjął) jest zapisany w **temacie kanału ticketu** —
   zero bazy danych, przetrwa restart bota.
 
+- **`/panel rekrutacja kanal:#kanał kategoria:<kategoria> rola-obslugi:@rola [ranga-po-akceptacji:@rola]`**
+  — publikuje embed z przyciskiem **"📝 Napisz podanie"**. Klik → blokada, jeśli kandydat ma już otwarte
+  podanie albo jest na 24-godzinnym cooldownie po niedawnym odrzuceniu. Najpierw select menu "Czy posiadasz
+  sprawny mikrofon?", potem modal z pytaniami: ile masz lat, czy byłeś na innych serwerach (i na jakich),
+  ile grasz w Emergency Hamburg, skąd poznałeś serwer, ile masz godzin na naszym serwerze. Bot tworzy
+  prywatny kanał-podanie w `kategoria` (widoczny dla kandydata i `rola-obslugi`) z embedem zawierającym
+  odpowiedzi **plus automatycznie datę założenia konta Discord i datę dołączenia na serwer** — łatwo
+  zauważyć świeże konto zgłaszające się od razu. Obsługa rozpatruje przez **select menu**:
+  - **✅ Przyjmij** — nadaje `ranga-po-akceptacji` (jeśli podana), wysyła kandydatowi DM z gratulacjami,
+    zamyka kanał.
+  - **❌ Odrzuć** — pyta o powód (opcjonalnie), wysyła DM z powodem, ustawia **24h cooldown** na ponowne
+    podanie, zamyka kanał.
+  - **📞 Wezwij użytkownika** — wysyła kandydatowi DM z prośbą o kontakt/powrót na kanał; kanał zostaje
+    otwarty.
+  - **👀 W trakcie rozpatrywania** — oznacza w embedzie, kto się już tym zajmuje, żeby obsługa nie
+    dublowała pracy; kanał zostaje otwarty.
+
+  Tak jak w tickecie, cały stan (właściciel, obie role, status) jest w temacie kanału — zero bazy danych.
+
 ### Realistyczny łańcuch wymagań
 
 Panele można spiąć w logiczny ciąg zależności, tak żeby nie dało się "przeskoczyć" etapów:

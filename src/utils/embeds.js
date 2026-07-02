@@ -253,6 +253,65 @@ function buildTicketEmbed({ owner, reason, claimerId }) {
     .setTimestamp();
 }
 
+function buildApplicationPanelEmbed(supportRole) {
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('📝 Panel — Rekrutacja')
+    .setDescription(
+      'Kliknij przycisk poniżej, aby złożyć podanie do naszej społeczności.\n\n' +
+        `Twoje podanie zobaczy tylko rola ${supportRole} — odpowiedz szczerze, to nie zajmie długo!`
+    )
+    .setFooter({ text: config.serverName });
+}
+
+function buildApplicationStatusText({ status, reviewerId, rejectReason }) {
+  switch (status) {
+    case 'review':
+      return `👀 W trakcie rozpatrywania przez <@${reviewerId}>`;
+    case 'accepted':
+      return `✅ Przyjęte przez <@${reviewerId}>`;
+    case 'rejected':
+      return `❌ Odrzucone przez <@${reviewerId}>${rejectReason ? ` — powód: ${rejectReason}` : ''}`;
+    default:
+      return '🟡 Nowe podanie';
+  }
+}
+
+function buildApplicationEmbed({
+  applicant,
+  mic,
+  age,
+  otherServers,
+  ehExperience,
+  foundVia,
+  hoursOnServer,
+  status,
+  reviewerId,
+  rejectReason,
+}) {
+  const createdAt = Math.floor(applicant.user.createdTimestamp / 1000);
+  const joinedAt = applicant.joinedTimestamp ? Math.floor(applicant.joinedTimestamp / 1000) : null;
+
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('📝 Podanie')
+    .setAuthor({ name: applicant.user.tag, iconURL: applicant.user.displayAvatarURL() })
+    .addFields(
+      { name: '👤 Kandydat', value: `${applicant}`, inline: true },
+      { name: '🎙️ Mikrofon', value: mic, inline: true },
+      { name: '📅 Konto założone', value: `<t:${createdAt}:R>`, inline: true },
+      { name: '🚪 Dołączył na serwer', value: joinedAt ? `<t:${joinedAt}:R>` : 'brak danych', inline: true },
+      { name: '🔞 Wiek', value: age, inline: true },
+      { name: '⏱️ Staż w Emergency Hamburg', value: ehExperience, inline: true },
+      { name: '🌍 Doświadczenie na innych serwerach', value: otherServers, inline: false },
+      { name: '📢 Skąd poznał(a) serwer', value: foundVia, inline: false },
+      { name: '⏳ Godziny na naszym serwerze', value: hoursOnServer, inline: false },
+      { name: '📌 Status', value: buildApplicationStatusText({ status, reviewerId, rejectReason }), inline: false }
+    )
+    .setFooter({ text: config.serverName })
+    .setTimestamp();
+}
+
 module.exports = {
   buildPanelEmbed,
   buildIdCardEmbed,
@@ -267,4 +326,6 @@ module.exports = {
   buildVehicleCardEmbed,
   buildTicketPanelEmbed,
   buildTicketEmbed,
+  buildApplicationPanelEmbed,
+  buildApplicationEmbed,
 };

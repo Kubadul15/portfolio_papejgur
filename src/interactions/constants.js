@@ -52,4 +52,20 @@ module.exports = {
   TICKET_ADD_USER_SELECT_ID: 'ticket_add_user_select',
   TICKET_CLOSE_BUTTON_ID: 'ticket_close',
   MODAL_FIELD_TICKET_REASON: 'ticket_reason',
+
+  // Panel rekrutacji. Kategoria, rola obslugi i opcjonalna rola po
+  // akceptacji sa kodowane w customId startu/select menu/modala, a po
+  // utworzeniu kanalu podania caly stan (wlasciciel, obie role, status)
+  // trzymany jest w temacie kanalu - jak w tickecie, bezstanowo.
+  APP_START_PREFIX: 'app_start',
+  APP_MIC_SELECT_PREFIX: 'app_mic',
+  APP_MODAL_PREFIX: 'app_modal',
+  APP_REVIEW_SELECT_ID: 'app_review',
+  APP_REJECT_MODAL_ID: 'app_reject_modal',
+  MODAL_FIELD_APP_AGE: 'app_age',
+  MODAL_FIELD_APP_OTHER_SERVERS: 'app_other_servers',
+  MODAL_FIELD_APP_EH_EXPERIENCE: 'app_eh_experience',
+  MODAL_FIELD_APP_FOUND_VIA: 'app_found_via',
+  MODAL_FIELD_APP_HOURS: 'app_hours',
+  MODAL_FIELD_APP_REJECT_REASON: 'app_reject_reason',
 };
