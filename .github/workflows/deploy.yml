@@ -1,0 +1,46 @@
+name: Deploy bota (self-hosted 24/7)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Zapis pliku .env z sekretów repo
+        shell: bash
+        run: |
+          cat > .env <<EOF
+          DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID=${{ secrets.CLIENT_ID }}
+          GUILD_ID=${{ secrets.GUILD_ID }}
+          TARGET_CHANNEL_ID=${{ secrets.TARGET_CHANNEL_ID }}
+          ID_PREFIX=${{ secrets.ID_PREFIX }}
+          SERVER_NAME=${{ secrets.SERVER_NAME }}
+          EMBED_COLOR=${{ secrets.EMBED_COLOR }}
+          EOF
+
+      - name: Rejestracja / aktualizacja komend slash
+        run: node src/deploy-commands.js
+
+      - name: Instalacja pm2 (jeśli brak)
+        shell: bash
+        run: command -v pm2 >/dev/null 2>&1 || npm install -g pm2
+
+      - name: Start/restart bota przez pm2
+        run: |
+          pm2 startOrRestart ecosystem.config.js --update-env
+          pm2 save
