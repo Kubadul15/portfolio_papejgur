@@ -224,6 +224,35 @@ function buildVehicleCardEmbed({ discordUser, make, year, color, engine, owner, 
     .setTimestamp();
 }
 
+function buildTicketPanelEmbed(supportRole) {
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('🎫 Panel — Wsparcie / Tickety')
+    .setDescription(
+      'Kliknij przycisk poniżej, aby stworzyć prywatny kanał z obsługą serwera.\n\n' +
+        `Twój ticket zobaczy tylko rola ${supportRole} — a gdy ktoś z obsługi go przyjmie, kanał będzie ` +
+        'widoczny już tylko dla Ciebie i tej jednej osoby.'
+    )
+    .setFooter({ text: config.serverName });
+}
+
+function buildTicketEmbed({ owner, reason, claimerId }) {
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('🎫 Ticket')
+    .addFields(
+      { name: '👤 Utworzone przez', value: `${owner}`, inline: true },
+      {
+        name: '📌 Status',
+        value: claimerId ? `🟢 Przyjęty przez <@${claimerId}>` : '🟡 Oczekuje na przyjęcie',
+        inline: true,
+      },
+      { name: '📝 Temat', value: reason, inline: false }
+    )
+    .setFooter({ text: config.serverName })
+    .setTimestamp();
+}
+
 module.exports = {
   buildPanelEmbed,
   buildIdCardEmbed,
@@ -236,4 +265,6 @@ module.exports = {
   getEmbedFieldValue,
   buildVehiclePanelEmbed,
   buildVehicleCardEmbed,
+  buildTicketPanelEmbed,
+  buildTicketEmbed,
 };

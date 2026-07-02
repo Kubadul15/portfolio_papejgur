@@ -39,4 +39,17 @@ module.exports = {
   MODAL_FIELD_VEHICLE_COLOR: 'vehicle_color',
   MODAL_FIELD_VEHICLE_ENGINE: 'vehicle_engine',
   MODAL_FIELD_VEHICLE_OWNER: 'vehicle_owner',
+
+  // Panel ticketow. Kategoria i rola obslugi sa zakodowane w customId
+  // przycisku startowego, a caly stan konkretnego ticketu (wlasciciel,
+  // rola obslugi, kto go przyjal) trzymany jest w temacie kanalu
+  // ticketu - dzieki temu klik "Przyjmij"/"Dodaj osobe"/"Zamknij" nie
+  // potrzebuje zadnych danych w customId i przetrwa restart bota.
+  TICKET_CREATE_PREFIX: 'ticket_create',
+  TICKET_MODAL_PREFIX: 'ticket_modal',
+  TICKET_CLAIM_BUTTON_ID: 'ticket_claim',
+  TICKET_ADD_USER_BUTTON_ID: 'ticket_add_user',
+  TICKET_ADD_USER_SELECT_ID: 'ticket_add_user_select',
+  TICKET_CLOSE_BUTTON_ID: 'ticket_close',
+  MODAL_FIELD_TICKET_REASON: 'ticket_reason',
 };

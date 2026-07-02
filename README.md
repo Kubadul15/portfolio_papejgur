@@ -48,6 +48,21 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępne pane
   — wszystko trafia na kartę **Dowód Rejestracyjny Pojazdu RP**, którą gracz wysyła przyciskiem **Wyślij**
   na skonfigurowany kanał. Bez żadnej bazy danych — kanał docelowy i kategoria są zakodowane w przyciskach.
 
+- **`/panel tickety kanal:#kanał kategoria:<kategoria> rola-obslugi:@rola`** — publikuje embed z
+  przyciskiem **"Stwórz Ticket"**. Klik → jeśli gracz ma już otwarty ticket, bot odmawia i wskazuje
+  istniejący kanał (**jeden aktywny ticket na osobę**). W przeciwnym razie pokazuje modal z tematem/powodem,
+  po czym tworzy prywatny kanał tekstowy w podanej `kategoria` — widoczny tylko dla twórcy i roli
+  `rola-obslugi`. W kanale ticketu pojawia się embed z przyciskami:
+  - **Przyjmij** — dowolny członek `rola-obslugi` może przyjąć zgłoszenie; po przyjęciu **reszta obsługi
+    traci widoczność tego kanału** — zostaje tylko twórca i osoba, która przyjęła.
+  - **Dodaj osobę** — obsługa może przez wybór z listy dorzucić dodatkową osobę do rozmowy (np. świadka).
+  - **Zamknij** — dostępne dla twórcy i obsługi. Jeśli ustawiono `ADMIN_LOG_CHANNEL_ID`, bot wysyła tam
+    **transkrypt** (do 100 ostatnich wiadomości jako plik `.txt`) razem z metadanymi (kto stworzył, kto
+    przyjął, kto zamknął), a następnie usuwa kanał.
+
+  Cały stan ticketu (właściciel, rola obsługi, kto przyjął) jest zapisany w **temacie kanału ticketu** —
+  zero bazy danych, przetrwa restart bota.
+
 ### Realistyczny łańcuch wymagań
 
 Panele można spiąć w logiczny ciąg zależności, tak żeby nie dało się "przeskoczyć" etapów:
@@ -87,10 +102,13 @@ tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
 1. Wejdź na https://discord.com/developers/applications → **New Application**.
 2. W zakładce **Bot** kliknij **Reset Token** i skopiuj token (to `DISCORD_TOKEN`).
 3. W zakładce **General Information** skopiuj **Application ID** (to `CLIENT_ID`).
-4. W zakładce **OAuth2 → URL Generator** zaznacz scope `bot` oraz `applications.commands`,
-   z uprawnień zaznacz co najmniej: *Send Messages*, *Embed Links*, *Use Slash Commands*.
+4. W zakładce **Bot** włącz **Privileged Gateway Intents → MESSAGE CONTENT INTENT** (jeden przełącznik,
+   bez weryfikacji dla botów na mniej niż 100 serwerach) — potrzebne do transkryptów zamykanych ticketów.
+5. W zakładce **OAuth2 → URL Generator** zaznacz scope `bot` oraz `applications.commands`,
+   z uprawnień zaznacz co najmniej: *Send Messages*, *Embed Links*, *Use Slash Commands*, *Manage Roles*
+   (nadawanie ról), *Manage Channels* (tworzenie/usuwanie kanałów ticketów).
    Wygenerowanym linkiem zaproś bota na serwer Gdańsk RP.
-5. Włącz Developer Mode w Discordzie (Ustawienia → Zaawansowane), kliknij PPM na serwer →
+6. Włącz Developer Mode w Discordzie (Ustawienia → Zaawansowane), kliknij PPM na serwer →
    **Kopiuj ID serwera** (to `GUILD_ID`), oraz PPM na kanał docelowy dowodów → **Kopiuj ID kanału**
    (to `TARGET_CHANNEL_ID`).
 
@@ -166,6 +184,10 @@ płacić). Do stałego działania bota służy Railway opisany w sekcji 2 powyż
 Komenda `/panel` wymaga uprawnienia **Zarządzanie serwerem** — widzą i mogą jej użyć tylko
 administratorzy/staff, żeby zwykli gracze nie mogli tworzyć własnych paneli.
 
-Dla `/panel weryfikacja` bot dodatkowo musi mieć uprawnienie **Zarządzaj rolami**, a jego własna
-rola (najwyższa rola bota na liście ról serwera) musi być **wyżej** niż rola nadawana graczom —
-inaczej Discord nie pozwoli botowi jej przyznać i weryfikacja zakończy się błędem.
+Dla `/panel weryfikacja` (oraz opcjonalnych ról w `stworz-dowod`/`prawojazdy`) bot dodatkowo musi mieć
+uprawnienie **Zarządzaj rolami**, a jego własna rola (najwyższa rola bota na liście ról serwera) musi być
+**wyżej** niż rola nadawana graczom — inaczej Discord nie pozwoli botowi jej przyznać.
+
+Dla `/panel tickety` bot musi mieć uprawnienie **Zarządzaj kanałami** (tworzenie/usuwanie kanałów
+ticketów i edycja ich uprawnień) oraz włączony **Message Content Intent** (patrz krok 4 w sekcji 1) —
+bez niego transkrypt przy zamknięciu ticketu będzie pusty.

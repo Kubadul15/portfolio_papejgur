@@ -13,6 +13,12 @@ const { handleVehicleStartButton } = require('./vehicleStartButton');
 const { handleVehicleCategorySelect } = require('./vehicleCategorySelect');
 const { handleVehicleModal } = require('./vehicleModal');
 const { handleVehicleSendButton } = require('./vehicleSendButton');
+const { handleTicketCreateButton } = require('./ticketCreateButton');
+const { handleTicketModal } = require('./ticketModal');
+const { handleTicketClaimButton } = require('./ticketClaimButton');
+const { handleTicketAddUserButton } = require('./ticketAddUserButton');
+const { handleTicketAddUserSelect } = require('./ticketAddUserSelect');
+const { handleTicketCloseButton } = require('./ticketCloseButton');
 const {
   CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
@@ -30,6 +36,12 @@ const {
   VEHICLE_CATEGORY_PREFIX,
   VEHICLE_MODAL_PREFIX,
   VEHICLE_SEND_PREFIX,
+  TICKET_CREATE_PREFIX,
+  TICKET_MODAL_PREFIX,
+  TICKET_CLAIM_BUTTON_ID,
+  TICKET_ADD_USER_BUTTON_ID,
+  TICKET_ADD_USER_SELECT_ID,
+  TICKET_CLOSE_BUTTON_ID,
 } = require('./constants');
 
 async function routeInteraction(interaction, commands) {
@@ -56,6 +68,10 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${EXAM_SEND_PREFIX}:`)) return await handleExamSendButton(interaction);
       if (id.startsWith(`${VEHICLE_START_PREFIX}:`)) return await handleVehicleStartButton(interaction);
       if (id.startsWith(`${VEHICLE_SEND_PREFIX}:`)) return await handleVehicleSendButton(interaction);
+      if (id.startsWith(`${TICKET_CREATE_PREFIX}:`)) return await handleTicketCreateButton(interaction);
+      if (id === TICKET_CLAIM_BUTTON_ID) return await handleTicketClaimButton(interaction);
+      if (id === TICKET_ADD_USER_BUTTON_ID) return await handleTicketAddUserButton(interaction);
+      if (id === TICKET_CLOSE_BUTTON_ID) return await handleTicketCloseButton(interaction);
       return;
     }
 
@@ -64,6 +80,11 @@ async function routeInteraction(interaction, commands) {
 
       if (id.startsWith(`${EXAM_CATEGORY_PREFIX}:`)) return await handleExamCategorySelect(interaction);
       if (id.startsWith(`${VEHICLE_CATEGORY_PREFIX}:`)) return await handleVehicleCategorySelect(interaction);
+      return;
+    }
+
+    if (interaction.isUserSelectMenu()) {
+      if (interaction.customId === TICKET_ADD_USER_SELECT_ID) return await handleTicketAddUserSelect(interaction);
       return;
     }
 
@@ -76,6 +97,7 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${VERIFY_MODAL_PREFIX}:`)) return await handleVerifyModal(interaction);
       if (id.startsWith(`${EXAM_MODAL_PREFIX}:`)) return await handleExamModal(interaction);
       if (id.startsWith(`${VEHICLE_MODAL_PREFIX}:`)) return await handleVehicleModal(interaction);
+      if (id.startsWith(`${TICKET_MODAL_PREFIX}:`)) return await handleTicketModal(interaction);
     }
   } catch (error) {
     console.error('Błąd podczas obsługi interakcji:', error);

@@ -11,12 +11,14 @@ const {
   buildVerificationPanelEmbed,
   buildExamPanelEmbed,
   buildVehiclePanelEmbed,
+  buildTicketPanelEmbed,
 } = require('../utils/embeds');
 const {
   CREATE_ID_BUTTON_ID,
   VERIFY_START_PREFIX,
   EXAM_START_PREFIX,
   VEHICLE_START_PREFIX,
+  TICKET_CREATE_PREFIX,
 } = require('../interactions/constants');
 
 module.exports = {
@@ -89,6 +91,31 @@ module.exports = {
           option
             .setName('wymagana-ranga')
             .setDescription('Rola wymagana do zarejestrowania pojazdu (np. nadawana po zdaniu prawa jazdy)')
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('tickety')
+        .setDescription('Wysyła panel tworzenia prywatnych ticketów wsparcia')
+        .addChannelOption((option) =>
+          option
+            .setName('kanal')
+            .setDescription('Kanał, na który zostanie wysłany panel ticketów')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(true)
+        )
+        .addChannelOption((option) =>
+          option
+            .setName('kategoria')
+            .setDescription('Kategoria, w której będą tworzone kanały ticketów')
+            .addChannelTypes(ChannelType.GuildCategory)
+            .setRequired(true)
+        )
+        .addRoleOption((option) =>
+          option
+            .setName('rola-obslugi')
+            .setDescription('Rola widząca nowe tickety i mogąca je przyjmować/zamykać')
             .setRequired(true)
         )
     ),
@@ -174,6 +201,35 @@ module.exports = {
       );
 
       await interaction.reply({ embeds: [embed], components: [row] });
+      return;
+    }
+
+    if (subcommand === 'tickety') {
+      const channel = interaction.options.getChannel('kanal');
+      const category = interaction.options.getChannel('kategoria');
+      const supportRole = interaction.options.getRole('rola-obslugi');
+
+      const embed = buildTicketPanelEmbed(supportRole);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${TICKET_CREATE_PREFIX}:${category.id}:${supportRole.id}`)
+          .setLabel('Stwórz Ticket')
+          .setEmoji('🎫')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      try {
+        await channel.send({ embeds: [embed], components: [row] });
+      } catch (error) {
+        console.error('Błąd podczas wysyłania panelu ticketów:', error);
+        await interaction.reply({
+          content: `❌ Nie udało się wysłać panelu na ${channel}. Sprawdź, czy bot ma tam uprawnienia do wysyłania wiadomości.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.reply({ content: `✅ Panel ticketów wysłany na ${channel}.`, ephemeral: true });
     }
   },
 };

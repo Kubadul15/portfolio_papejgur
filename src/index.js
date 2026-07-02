@@ -3,7 +3,9 @@ const config = require('./config');
 const panelCommand = require('./commands/panel');
 const { routeInteraction } = require('./interactions');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+});
 
 const commands = new Collection();
 commands.set(panelCommand.data.name, panelCommand);
