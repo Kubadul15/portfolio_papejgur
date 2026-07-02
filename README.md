@@ -92,6 +92,29 @@ npm run deploy-commands
 npm start
 ```
 
+## Szybki test w GitHub Codespaces (nie 24/7!)
+
+Codespaces to wygodny sposób, żeby **przetestować** bota bez instalowania czegokolwiek lokalnie —
+**ale to nie jest hosting 24/7**. Codespace usypia po okresie bezczynności, a darmowe konto ma
+ograniczony miesięczny limit godzin (przy ciągłym działaniu 24/7 szybko go przekroczysz i zaczniesz
+płacić). Do stałego działania bota służy self-hosted runner opisany w krokach 1–5 powyżej.
+
+1. Ustaw sekrety na poziomie Codespaces: **Settings → Secrets and variables → Codespaces →
+   New repository secret**, dodaj te same wartości co w tabeli z sekcji 2 (`DISCORD_TOKEN`,
+   `CLIENT_ID`, `GUILD_ID`, `TARGET_CHANNEL_ID`, `ID_PREFIX`, `SERVER_NAME`, `EMBED_COLOR`).
+   GitHub wstrzyknie je automatycznie jako zmienne środowiskowe w Codespace (`.devcontainer/devcontainer.json`
+   przekazuje je dalej do kontenera) — nie trzeba ręcznie tworzyć pliku `.env`.
+2. **Code → Codespaces → Create codespace on main** — zależności (`npm install`) zainstalują się
+   automatycznie po starcie.
+3. W terminalu Codespace uruchom:
+   ```bash
+   npm run deploy-commands
+   npm start
+   ```
+4. Bot będzie działał tak długo, jak długo Codespace jest uruchomiony/aktywny. Po jego zatrzymaniu
+   (bezczynność, zamknięcie karty, limit godzin) bot przestanie odpowiadać — to normalne przy tym
+   trybie i nie jest błędem.
+
 ## Uprawnienia
 
 Komenda `/panel` wymaga uprawnienia **Zarządzanie serwerem** — widzą i mogą jej użyć tylko

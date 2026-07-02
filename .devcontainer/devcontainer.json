@@ -1,0 +1,19 @@
+{
+  "name": "emergency-hamburg-rp-bot",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye",
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint"]
+    }
+  },
+  "remoteEnv": {
+    "DISCORD_TOKEN": "${localEnv:DISCORD_TOKEN}",
+    "CLIENT_ID": "${localEnv:CLIENT_ID}",
+    "GUILD_ID": "${localEnv:GUILD_ID}",
+    "TARGET_CHANNEL_ID": "${localEnv:TARGET_CHANNEL_ID}",
+    "ID_PREFIX": "${localEnv:ID_PREFIX}",
+    "SERVER_NAME": "${localEnv:SERVER_NAME}",
+    "EMBED_COLOR": "${localEnv:EMBED_COLOR}"
+  }
+}
