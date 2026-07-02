@@ -1,7 +1,9 @@
 const { EmbedBuilder } = require('discord.js');
 const config = require('../config');
 
-function buildPanelEmbed() {
+function buildPanelEmbed(awardRole) {
+  const roleLine = awardRole ? `\n\nPo wysłaniu dowodu automatycznie otrzymasz rolę ${awardRole}.` : '';
+
   return new EmbedBuilder()
     .setColor(config.embedColor)
     .setTitle('📋 Panel — Dowód Osobisty RP')
@@ -11,12 +13,21 @@ function buildPanelEmbed() {
         '• Imię i nazwisko RP\n' +
         '• Wiek RP\n' +
         '• Obywatelstwo RP\n' +
-        '• Nick Roblox (zostanie automatycznie zweryfikowany)'
+        `• Nick Roblox (zostanie automatycznie zweryfikowany)${roleLine}`
     )
     .setFooter({ text: config.serverName });
 }
 
-function buildIdCardEmbed({ discordUser, fullName, age, citizenship, robloxUsername, robloxData, idNumber }) {
+function buildIdCardEmbed({
+  discordUser,
+  fullName,
+  age,
+  citizenship,
+  robloxUsername,
+  robloxData,
+  idNumber,
+  awardRoleId,
+}) {
   const verified = Boolean(robloxData);
 
   const embed = new EmbedBuilder()
@@ -38,6 +49,10 @@ function buildIdCardEmbed({ discordUser, fullName, age, citizenship, robloxUsern
     )
     .setFooter({ text: config.serverName })
     .setTimestamp();
+
+  if (awardRoleId) {
+    embed.addFields({ name: '🔑 Rola po wysłaniu', value: `<@&${awardRoleId}>`, inline: false });
+  }
 
   if (verified && robloxData.avatarUrl) {
     embed.setThumbnail(robloxData.avatarUrl);
@@ -87,8 +102,9 @@ function buildVerificationCodeEmbed({ discordUser, robloxData, code }) {
   return embed;
 }
 
-function buildExamPanelEmbed(targetChannel, awardRole) {
+function buildExamPanelEmbed(targetChannel, awardRole, requiredRole) {
   const roleLine = awardRole ? `\n\nPo zdanym egzaminie automatycznie otrzymasz rolę ${awardRole}.` : '';
+  const requiredLine = requiredRole ? `\n\nWymagana jest rola ${requiredRole}, aby móc przystąpić.` : '';
 
   return new EmbedBuilder()
     .setColor(config.embedColor)
@@ -97,8 +113,8 @@ function buildExamPanelEmbed(targetChannel, awardRole) {
       'Kliknij przycisk poniżej, aby podejść do egzaminu na **Prawo Jazdy RP**.\n\n' +
         'Najpierw wybierzesz kategorię i wypełnisz krótki formularz zgłoszeniowy (imię i nazwisko RP, ' +
         'wiek RP, nick Roblox), a następnie odpowiesz na losowe pytania egzaminu teoretycznego — ' +
-        'dokładnie jak na prawdziwym egzaminie.\n\n' +
-        `Po zdanym egzaminie Twoje Prawo Jazdy RP trafi na kanał ${targetChannel}.${roleLine}`
+        'dokładnie jak na prawdziwym egzaminie. Minimalny wiek zależy od wybranej kategorii.\n\n' +
+        `Po zdanym egzaminie Twoje Prawo Jazdy RP trafi na kanał ${targetChannel}.${roleLine}${requiredLine}`
     )
     .setFooter({ text: config.serverName });
 }
@@ -193,7 +209,7 @@ function buildVehicleCardEmbed({ discordUser, make, year, color, engine, owner, 
     .addFields(
       { name: '👤 Właściciel', value: owner, inline: false },
       { name: '🚙 Marka i model', value: make, inline: true },
-      { name: '📅 Rok produkcji', value: year, inline: true },
+      { name: '📅 Rok produkcji', value: String(year), inline: true },
       { name: '🎨 Kolor', value: color, inline: true },
       { name: '🔧 Silnik', value: engine, inline: true },
       { name: '🚦 Kategoria', value: category, inline: true },

@@ -44,7 +44,9 @@ async function routeInteraction(interaction, commands) {
     if (interaction.isButton()) {
       const id = interaction.customId;
 
-      if (id === CREATE_ID_BUTTON_ID) return await handleCreateIdButton(interaction);
+      if (id === CREATE_ID_BUTTON_ID || id.startsWith(`${CREATE_ID_BUTTON_ID}:`)) {
+        return await handleCreateIdButton(interaction);
+      }
       if (id === SEND_ID_BUTTON_ID) return await handleSendIdButton(interaction);
       if (id === CANCEL_ID_BUTTON_ID) return await handleCancelIdButton(interaction);
       if (id.startsWith(`${VERIFY_START_PREFIX}:`)) return await handleVerifyStartButton(interaction);
@@ -68,7 +70,9 @@ async function routeInteraction(interaction, commands) {
     if (interaction.isModalSubmit()) {
       const id = interaction.customId;
 
-      if (id === CREATE_ID_MODAL_ID) return await handleCreateIdModal(interaction);
+      if (id === CREATE_ID_MODAL_ID || id.startsWith(`${CREATE_ID_MODAL_ID}:`)) {
+        return await handleCreateIdModal(interaction);
+      }
       if (id.startsWith(`${VERIFY_MODAL_PREFIX}:`)) return await handleVerifyModal(interaction);
       if (id.startsWith(`${EXAM_MODAL_PREFIX}:`)) return await handleExamModal(interaction);
       if (id.startsWith(`${VEHICLE_MODAL_PREFIX}:`)) return await handleVehicleModal(interaction);

@@ -1,5 +1,6 @@
 const { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const {
+  CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
   MODAL_FIELD_FULL_NAME,
   MODAL_FIELD_AGE,
@@ -8,7 +9,11 @@ const {
 } = require('./constants');
 
 async function handleCreateIdButton(interaction) {
-  const modal = new ModalBuilder().setCustomId(CREATE_ID_MODAL_ID).setTitle('Stwórz Dowód Osobisty RP');
+  const rest = interaction.customId.slice(CREATE_ID_BUTTON_ID.length);
+  const roleId = rest.startsWith(':') ? rest.slice(1) : null;
+  const modalCustomId = roleId ? `${CREATE_ID_MODAL_ID}:${roleId}` : CREATE_ID_MODAL_ID;
+
+  const modal = new ModalBuilder().setCustomId(modalCustomId).setTitle('Stwórz Dowód Osobisty RP');
 
   const fullNameInput = new TextInputBuilder()
     .setCustomId(MODAL_FIELD_FULL_NAME)

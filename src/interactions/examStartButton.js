@@ -4,6 +4,16 @@ const { getCooldownExpiresAt } = require('../utils/cooldown');
 const { EXAM_START_PREFIX, EXAM_CATEGORY_PREFIX } = require('./constants');
 
 async function handleExamStartButton(interaction) {
+  const [channelId, roleId, requiredRoleId] = interaction.customId.slice(EXAM_START_PREFIX.length + 1).split(':');
+
+  if (requiredRoleId && !interaction.member.roles.cache.has(requiredRoleId)) {
+    await interaction.reply({
+      content: `❌ Musisz posiadać rolę <@&${requiredRoleId}> (np. z Dowodu Osobistego RP), aby podejść do egzaminu.`,
+      ephemeral: true,
+    });
+    return;
+  }
+
   const cooldownExpiresAt = getCooldownExpiresAt(interaction.user.id);
   if (cooldownExpiresAt) {
     await interaction.reply({
@@ -12,8 +22,6 @@ async function handleExamStartButton(interaction) {
     });
     return;
   }
-
-  const [channelId, roleId] = interaction.customId.slice(EXAM_START_PREFIX.length + 1).split(':');
 
   const select = new StringSelectMenuBuilder()
     .setCustomId(`${EXAM_CATEGORY_PREFIX}:${channelId}:${roleId || ''}`)

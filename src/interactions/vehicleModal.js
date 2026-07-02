@@ -1,6 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { buildVehicleCardEmbed } = require('../utils/embeds');
 const { generatePlateNumber, generateVin } = require('../utils/vehicle');
+const { parseYear } = require('../utils/validation');
 const {
   VEHICLE_MODAL_PREFIX,
   VEHICLE_SEND_PREFIX,
@@ -16,10 +17,19 @@ async function handleVehicleModal(interaction) {
   const [channelId, category] = interaction.customId.slice(VEHICLE_MODAL_PREFIX.length + 1).split(':');
 
   const make = interaction.fields.getTextInputValue(MODAL_FIELD_VEHICLE_MAKE).trim();
-  const year = interaction.fields.getTextInputValue(MODAL_FIELD_VEHICLE_YEAR).trim();
+  const rawYear = interaction.fields.getTextInputValue(MODAL_FIELD_VEHICLE_YEAR).trim();
   const color = interaction.fields.getTextInputValue(MODAL_FIELD_VEHICLE_COLOR).trim();
   const engine = interaction.fields.getTextInputValue(MODAL_FIELD_VEHICLE_ENGINE).trim();
   const owner = interaction.fields.getTextInputValue(MODAL_FIELD_VEHICLE_OWNER).trim();
+
+  const year = parseYear(rawYear);
+  if (year === null) {
+    await interaction.reply({
+      content: `⚠️ Podaj prawidłowy rok produkcji — liczba czterocyfrowa od 1900 do ${new Date().getFullYear() + 1}. Użyj przycisku jeszcze raz.`,
+      ephemeral: true,
+    });
+    return;
+  }
 
   const embed = buildVehicleCardEmbed({
     discordUser: interaction.user,

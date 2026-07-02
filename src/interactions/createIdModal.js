@@ -2,7 +2,9 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { verifyRobloxUsername } = require('../utils/roblox');
 const { buildIdCardEmbed } = require('../utils/embeds');
 const { generateIdNumber } = require('../utils/idNumber');
+const { parseAge } = require('../utils/validation');
 const {
+  CREATE_ID_MODAL_ID,
   MODAL_FIELD_FULL_NAME,
   MODAL_FIELD_AGE,
   MODAL_FIELD_CITIZENSHIP,
@@ -14,10 +16,21 @@ const {
 async function handleCreateIdModal(interaction) {
   await interaction.deferReply({ ephemeral: true });
 
+  const rest = interaction.customId.slice(CREATE_ID_MODAL_ID.length);
+  const roleId = rest.startsWith(':') ? rest.slice(1) : null;
+
   const fullName = interaction.fields.getTextInputValue(MODAL_FIELD_FULL_NAME).trim();
-  const age = interaction.fields.getTextInputValue(MODAL_FIELD_AGE).trim();
+  const rawAge = interaction.fields.getTextInputValue(MODAL_FIELD_AGE).trim();
   const citizenship = interaction.fields.getTextInputValue(MODAL_FIELD_CITIZENSHIP).trim();
   const robloxUsername = interaction.fields.getTextInputValue(MODAL_FIELD_ROBLOX).trim();
+
+  const age = parseAge(rawAge);
+  if (age === null) {
+    await interaction.editReply({
+      content: '⚠️ Podaj prawidłowy wiek — liczba całkowita od 1 do 100. Użyj przycisku jeszcze raz.',
+    });
+    return;
+  }
 
   let robloxData = null;
   let lookupFailed = false;
@@ -39,6 +52,7 @@ async function handleCreateIdModal(interaction) {
     robloxUsername,
     robloxData,
     idNumber,
+    awardRoleId: roleId,
   });
 
   const buttons = [

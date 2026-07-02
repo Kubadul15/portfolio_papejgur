@@ -25,7 +25,15 @@ module.exports = {
     .setDescription('Publikowanie paneli weryfikacyjnych serwera')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand((subcommand) =>
-      subcommand.setName('stworz-dowod').setDescription('Wysyła panel do tworzenia Dowodu Osobistego RP')
+      subcommand
+        .setName('stworz-dowod')
+        .setDescription('Wysyła panel do tworzenia Dowodu Osobistego RP')
+        .addRoleOption((option) =>
+          option
+            .setName('ranga')
+            .setDescription('Opcjonalna rola nadawana automatycznie po wysłaniu dowodu')
+            .setRequired(false)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -59,6 +67,12 @@ module.exports = {
             .setDescription('Opcjonalna rola nadawana automatycznie po zdanym egzaminie')
             .setRequired(false)
         )
+        .addRoleOption((option) =>
+          option
+            .setName('wymagana-ranga')
+            .setDescription('Opcjonalna rola wymagana do podejścia (np. nadawana po stworzeniu Dowodu)')
+            .setRequired(false)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -83,10 +97,12 @@ module.exports = {
     const subcommand = interaction.options.getSubcommand();
 
     if (subcommand === 'stworz-dowod') {
-      const embed = buildPanelEmbed();
+      const role = interaction.options.getRole('ranga');
+
+      const embed = buildPanelEmbed(role);
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId(CREATE_ID_BUTTON_ID)
+          .setCustomId(role ? `${CREATE_ID_BUTTON_ID}:${role.id}` : CREATE_ID_BUTTON_ID)
           .setLabel('Stwórz Dowód')
           .setEmoji('🪪')
           .setStyle(ButtonStyle.Primary)
@@ -127,11 +143,14 @@ module.exports = {
     if (subcommand === 'prawojazdy') {
       const channel = interaction.options.getChannel('kanal');
       const role = interaction.options.getRole('ranga');
+      const requiredRole = interaction.options.getRole('wymagana-ranga');
 
-      const embed = buildExamPanelEmbed(channel, role);
+      const embed = buildExamPanelEmbed(channel, role, requiredRole);
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId(`${EXAM_START_PREFIX}:${channel.id}:${role ? role.id : ''}`)
+          .setCustomId(
+            `${EXAM_START_PREFIX}:${channel.id}:${role ? role.id : ''}:${requiredRole ? requiredRole.id : ''}`
+          )
           .setLabel('Podejdź do egzaminu')
           .setEmoji('🚗')
           .setStyle(ButtonStyle.Primary)
