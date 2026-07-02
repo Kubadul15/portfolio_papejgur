@@ -14,7 +14,7 @@ Kolejne panele (np. `/panel ...`) można dopisywać jako kolejne subkomendy w `s
 
 - Node.js 20+
 - Konto Discord Developer (aplikacja + bot)
-- Komputer, który ma działać 24/7 (będzie jednocześnie self-hosted runnerem GitHub Actions)
+- Konto na https://railway.app (hosting 24/7, połączony z tym repo na GitHubie)
 
 ## 1. Utworzenie bota w Discord Developer Portal
 
@@ -28,62 +28,41 @@ Kolejne panele (np. `/panel ...`) można dopisywać jako kolejne subkomendy w `s
    **Kopiuj ID serwera** (to `GUILD_ID`), oraz PPM na kanał docelowy dowodów → **Kopiuj ID kanału**
    (to `TARGET_CHANNEL_ID`).
 
-## 2. Konfiguracja repo (GitHub Secrets)
+## 2. Wdrożenie na Railway (hosting 24/7)
 
-W repo: **Settings → Secrets and variables → Actions → New repository secret**, dodaj:
+1. Załóż konto na https://railway.app (najprościej: zaloguj się przez GitHub).
+2. **New Project → Deploy from GitHub repo** → wybierz to repozytorium i branch `main`.
+3. Railway samo wykryje aplikację Node.js (Nixpacks), zainstaluje zależności i uruchomi `npm start`.
+4. W zakładce **Variables** projektu dodaj zmienne środowiskowe (te same nazwy co w `.env.example`):
 
-| Secret | Opis |
-|---|---|
-| `DISCORD_TOKEN` | token bota |
-| `CLIENT_ID` | Application ID |
-| `GUILD_ID` | ID serwera Gdańsk RP |
-| `TARGET_CHANNEL_ID` | ID kanału, na który trafiają zatwierdzone dowody |
-| `ID_PREFIX` | np. `EH` — prefiks numeru dowodu |
-| `SERVER_NAME` | np. `Emergency Hamburg ROLEPLAY \| Gdańsk RP` |
-| `EMBED_COLOR` | np. `#8b5cf6` |
+   | Zmienna | Opis |
+   |---|---|
+   | `DISCORD_TOKEN` | token bota |
+   | `CLIENT_ID` | Application ID |
+   | `GUILD_ID` | ID serwera Gdańsk RP |
+   | `TARGET_CHANNEL_ID` | ID kanału, na który trafiają zatwierdzone dowody |
+   | `ID_PREFIX` | np. `EH` — prefiks numeru dowodu |
+   | `SERVER_NAME` | np. `Emergency Hamburg ROLEPLAY \| Gdańsk RP` |
+   | `EMBED_COLOR` | np. `#8b5cf6` |
 
-**Ważne:** trzymaj to repo jako **prywatne**. Self-hosted runner wykonuje kod z tego repo na Twoim
-komputerze — na publicznym repo ktoś obcy mógłby podesłać złośliwy kod (dlatego workflow celowo
-uruchamia się tylko na `push` do `main`, nigdy na `pull_request`).
+5. Po zapisaniu zmiennych Railway zbuduje i uruchomi bota. `npm start` najpierw rejestruje/aktualizuje
+   komendy slash (`node src/deploy-commands.js`), a potem startuje bota (`node src/index.js`) —
+   wszystko dzieje się automatycznie przy każdym deployu.
+6. Od tej pory każdy `git push` na `main` automatycznie redeployuje bota na Railway — bez żadnej
+   dodatkowej konfiguracji po Twojej stronie.
 
-## 3. Rejestracja własnego komputera jako self-hosted runner
+**Koszt:** Railway nie jest już bezterminowo darmowy — nowe konta dostają jednorazowy kredyt
+próbny, a dalej działa na płatnym planie Hobby rozliczanym za realne zużycie (dla małego bota
+działającego 24/7 to zwykle niewielka kwota miesięcznie). W zamian dostajesz w pełni zarządzany,
+prawdziwy hosting 24/7 bez potrzeby trzymania własnego komputera włączonego.
 
-1. W repo: **Settings → Actions → Runners → New self-hosted runner**, wybierz swój system operacyjny.
-2. Wykonaj u siebie polecenia pokazane przez GitHub (pobranie paczki `actions-runner`, `./config.sh`
-   z tokenem podanym na tej stronie).
-3. Zainstaluj runnera jako usługę systemową, żeby startował automatycznie po restarcie komputera:
-   - Linux/macOS: `sudo ./svc.sh install && sudo ./svc.sh start`
-   - Windows (jako Administrator): `./svc install` i `./svc start`
+### Logi i restart na Railway
 
-## 4. Instalacja Node.js i pm2 na komputerze
+W dashboardzie projektu: zakładka **Deployments** → wybierz aktywny deployment → **View Logs**
+(podgląd logów na żywo). Restart bota: przycisk **Restart** przy deploymencie, redeploy najnowszej
+wersji: **Redeploy**.
 
-```bash
-npm install -g pm2
-pm2 startup   # wykonaj polecenie, które pm2 wypisze, żeby pm2 też startował po restarcie systemu
-```
-
-## 5. Deploy
-
-Wystarczy zrobić `git push` na branch `main` — workflow `.github/workflows/deploy.yml`:
-
-1. pobiera najnowszy kod na Twój komputer (runner),
-2. instaluje zależności (`npm ci`),
-3. zapisuje `.env` z GitHub Secrets,
-4. rejestruje/aktualizuje komendy slash (`node src/deploy-commands.js`),
-5. uruchamia/restartuje bota przez `pm2` (`pm2 startOrRestart ecosystem.config.js`).
-
-Od tego momentu bot działa 24/7 na Twoim komputerze i sam się aktualizuje po każdym pushu.
-Można też odpalić deploy ręcznie: **Actions → Deploy bota (self-hosted 24/7) → Run workflow**.
-
-### Przydatne komendy pm2 (na komputerze z runnerem)
-
-```bash
-pm2 status                          # sprawdź czy bot działa
-pm2 logs emergency-hamburg-rp-bot   # podgląd logów na żywo
-pm2 restart emergency-hamburg-rp-bot
-```
-
-## Uruchomienie lokalne (bez GitHub Actions, do testów)
+## Uruchomienie lokalne (do testów)
 
 ```bash
 npm install
@@ -97,7 +76,7 @@ npm start
 Codespaces to wygodny sposób, żeby **przetestować** bota bez instalowania czegokolwiek lokalnie —
 **ale to nie jest hosting 24/7**. Codespace usypia po okresie bezczynności, a darmowe konto ma
 ograniczony miesięczny limit godzin (przy ciągłym działaniu 24/7 szybko go przekroczysz i zaczniesz
-płacić). Do stałego działania bota służy self-hosted runner opisany w krokach 1–5 powyżej.
+płacić). Do stałego działania bota służy Railway opisany w sekcji 2 powyżej.
 
 1. Ustaw sekrety na poziomie Codespaces: **Settings → Secrets and variables → Codespaces →
    New repository secret**, dodaj te same wartości co w tabeli z sekcji 2 (`DISCORD_TOKEN`,

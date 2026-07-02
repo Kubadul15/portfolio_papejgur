@@ -8,7 +8,7 @@
     "node": ">=18.17.0"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/deploy-commands.js && node src/index.js",
     "deploy-commands": "node src/deploy-commands.js"
   },
   "dependencies": {
