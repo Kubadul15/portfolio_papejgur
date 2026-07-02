@@ -1,47 +1,28 @@
-const { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
-const {
-  EXAM_START_PREFIX,
-  EXAM_MODAL_PREFIX,
-  MODAL_FIELD_FULL_NAME,
-  MODAL_FIELD_AGE,
-  MODAL_FIELD_ROBLOX,
-} = require('./constants');
+const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { LICENSE_CATEGORIES } = require('../data/licenseCategories');
+const { EXAM_START_PREFIX, EXAM_CATEGORY_PREFIX } = require('./constants');
 
 async function handleExamStartButton(interaction) {
   const channelId = interaction.customId.slice(EXAM_START_PREFIX.length + 1);
 
-  const modal = new ModalBuilder()
-    .setCustomId(`${EXAM_MODAL_PREFIX}:${channelId}`)
-    .setTitle('Zgłoszenie — Prawo Jazdy RP');
+  const select = new StringSelectMenuBuilder()
+    .setCustomId(`${EXAM_CATEGORY_PREFIX}:${channelId}`)
+    .setPlaceholder('Wybierz kategorię prawa jazdy')
+    .addOptions(
+      LICENSE_CATEGORIES.map((category) => ({
+        label: category.value,
+        value: category.value,
+        description: category.description,
+      }))
+    );
 
-  const fullNameInput = new TextInputBuilder()
-    .setCustomId(MODAL_FIELD_FULL_NAME)
-    .setLabel('Imię i nazwisko RP')
-    .setStyle(TextInputStyle.Short)
-    .setMaxLength(50)
-    .setRequired(true);
+  const row = new ActionRowBuilder().addComponents(select);
 
-  const ageInput = new TextInputBuilder()
-    .setCustomId(MODAL_FIELD_AGE)
-    .setLabel('Wiek RP')
-    .setStyle(TextInputStyle.Short)
-    .setMaxLength(3)
-    .setRequired(true);
-
-  const robloxInput = new TextInputBuilder()
-    .setCustomId(MODAL_FIELD_ROBLOX)
-    .setLabel('Nick Roblox')
-    .setStyle(TextInputStyle.Short)
-    .setMaxLength(20)
-    .setRequired(true);
-
-  modal.addComponents(
-    new ActionRowBuilder().addComponents(fullNameInput),
-    new ActionRowBuilder().addComponents(ageInput),
-    new ActionRowBuilder().addComponents(robloxInput)
-  );
-
-  await interaction.showModal(modal);
+  await interaction.reply({
+    content: 'Na jaką kategorię prawa jazdy chcesz podejść do egzaminu?',
+    components: [row],
+    ephemeral: true,
+  });
 }
 
 module.exports = { handleExamStartButton };

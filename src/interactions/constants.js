@@ -22,6 +22,7 @@ module.exports = {
   // kandydata (imie, wiek, Roblox) w embedzie wiadomosci - dzieki temu
   // caly wieloetapowy egzamin jest bezstanowy i przetrwa restart bota.
   EXAM_START_PREFIX: 'exam_start',
+  EXAM_CATEGORY_PREFIX: 'exam_category',
   EXAM_MODAL_PREFIX: 'exam_modal',
   EXAM_ANSWER_PREFIX: 'exam_ans',
   EXAM_SEND_PREFIX: 'exam_send',

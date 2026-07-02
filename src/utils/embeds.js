@@ -100,7 +100,7 @@ function buildExamPanelEmbed(targetChannel) {
     .setFooter({ text: config.serverName });
 }
 
-function buildExamCandidateEmbed({ discordUser, fullName, age, robloxData }) {
+function buildExamCandidateEmbed({ discordUser, fullName, age, category, robloxData }) {
   const embed = new EmbedBuilder()
     .setColor(config.embedColor)
     .setTitle('🚗 Egzamin na Prawo Jazdy RP')
@@ -108,10 +108,11 @@ function buildExamCandidateEmbed({ discordUser, fullName, age, robloxData }) {
     .addFields(
       { name: '👤 Dane', value: fullName, inline: false },
       { name: '📅 Wiek', value: String(age), inline: true },
+      { name: '🚙 Kategoria', value: category, inline: true },
       {
         name: '🎲 Nick Roblox',
         value: `[@${robloxData.name}](https://www.roblox.com/users/${robloxData.id}/profile)`,
-        inline: true,
+        inline: false,
       }
     )
     .setFooter({ text: config.serverName });
@@ -137,7 +138,7 @@ function buildExamResultEmbed({ candidateEmbed, score, total, passed, licenseNum
   if (passed) {
     embed
       .setColor(config.embedColor)
-      .setTitle('🚗 Prawo Jazdy RP — Kategoria B')
+      .setTitle('🚗 Prawo Jazdy RP')
       .addFields(
         { name: '✅ Wynik egzaminu', value: `${score}/${total}`, inline: true },
         { name: '🆔 Numer', value: licenseNumber, inline: true }

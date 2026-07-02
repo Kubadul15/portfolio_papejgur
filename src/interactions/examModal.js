@@ -14,7 +14,7 @@ const {
 async function handleExamModal(interaction) {
   await interaction.deferReply({ ephemeral: true });
 
-  const channelId = interaction.customId.slice(EXAM_MODAL_PREFIX.length + 1);
+  const [channelId, category] = interaction.customId.slice(EXAM_MODAL_PREFIX.length + 1).split(':');
   const fullName = interaction.fields.getTextInputValue(MODAL_FIELD_FULL_NAME).trim();
   const age = interaction.fields.getTextInputValue(MODAL_FIELD_AGE).trim();
   const robloxUsername = interaction.fields.getTextInputValue(MODAL_FIELD_ROBLOX).trim();
@@ -37,7 +37,13 @@ async function handleExamModal(interaction) {
     return;
   }
 
-  const candidateEmbed = buildExamCandidateEmbed({ discordUser: interaction.user, fullName, age, robloxData });
+  const candidateEmbed = buildExamCandidateEmbed({
+    discordUser: interaction.user,
+    fullName,
+    age,
+    category,
+    robloxData,
+  });
   const firstQuestion = EXAM_QUESTIONS[0];
   const questionEmbed = buildExamQuestionEmbed(firstQuestion, 0, EXAM_QUESTIONS.length, 0);
 

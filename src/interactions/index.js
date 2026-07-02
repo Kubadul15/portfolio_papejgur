@@ -5,6 +5,7 @@ const { handleVerifyStartButton } = require('./verifyStartButton');
 const { handleVerifyModal } = require('./verifyModal');
 const { handleVerifyCheckButton } = require('./verifyCheckButton');
 const { handleExamStartButton } = require('./examStartButton');
+const { handleExamCategorySelect } = require('./examCategorySelect');
 const { handleExamModal } = require('./examModal');
 const { handleExamAnswerButton } = require('./examAnswerButton');
 const { handleExamSendButton } = require('./examSendButton');
@@ -17,6 +18,7 @@ const {
   VERIFY_MODAL_PREFIX,
   VERIFY_CHECK_PREFIX,
   EXAM_START_PREFIX,
+  EXAM_CATEGORY_PREFIX,
   EXAM_MODAL_PREFIX,
   EXAM_ANSWER_PREFIX,
   EXAM_SEND_PREFIX,
@@ -42,6 +44,13 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${EXAM_START_PREFIX}:`)) return await handleExamStartButton(interaction);
       if (id.startsWith(`${EXAM_ANSWER_PREFIX}:`)) return await handleExamAnswerButton(interaction);
       if (id.startsWith(`${EXAM_SEND_PREFIX}:`)) return await handleExamSendButton(interaction);
+      return;
+    }
+
+    if (interaction.isStringSelectMenu()) {
+      const id = interaction.customId;
+
+      if (id.startsWith(`${EXAM_CATEGORY_PREFIX}:`)) return await handleExamCategorySelect(interaction);
       return;
     }
 
