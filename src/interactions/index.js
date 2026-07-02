@@ -1,11 +1,17 @@
 const { handleCreateIdButton } = require('./createIdButton');
 const { handleCreateIdModal } = require('./createIdModal');
 const { handleSendIdButton, handleCancelIdButton } = require('./confirmButtons');
+const { handleVerifyStartButton } = require('./verifyStartButton');
+const { handleVerifyModal } = require('./verifyModal');
+const { handleVerifyCheckButton } = require('./verifyCheckButton');
 const {
   CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
   SEND_ID_BUTTON_ID,
   CANCEL_ID_BUTTON_ID,
+  VERIFY_START_PREFIX,
+  VERIFY_MODAL_PREFIX,
+  VERIFY_CHECK_PREFIX,
 } = require('./constants');
 
 async function routeInteraction(interaction, commands) {
@@ -18,22 +24,21 @@ async function routeInteraction(interaction, commands) {
     }
 
     if (interaction.isButton()) {
-      switch (interaction.customId) {
-        case CREATE_ID_BUTTON_ID:
-          return await handleCreateIdButton(interaction);
-        case SEND_ID_BUTTON_ID:
-          return await handleSendIdButton(interaction);
-        case CANCEL_ID_BUTTON_ID:
-          return await handleCancelIdButton(interaction);
-        default:
-          return;
-      }
+      const id = interaction.customId;
+
+      if (id === CREATE_ID_BUTTON_ID) return await handleCreateIdButton(interaction);
+      if (id === SEND_ID_BUTTON_ID) return await handleSendIdButton(interaction);
+      if (id === CANCEL_ID_BUTTON_ID) return await handleCancelIdButton(interaction);
+      if (id.startsWith(`${VERIFY_START_PREFIX}:`)) return await handleVerifyStartButton(interaction);
+      if (id.startsWith(`${VERIFY_CHECK_PREFIX}:`)) return await handleVerifyCheckButton(interaction);
+      return;
     }
 
     if (interaction.isModalSubmit()) {
-      if (interaction.customId === CREATE_ID_MODAL_ID) {
-        return await handleCreateIdModal(interaction);
-      }
+      const id = interaction.customId;
+
+      if (id === CREATE_ID_MODAL_ID) return await handleCreateIdModal(interaction);
+      if (id.startsWith(`${VERIFY_MODAL_PREFIX}:`)) return await handleVerifyModal(interaction);
     }
   } catch (error) {
     console.error('Błąd podczas obsługi interakcji:', error);

@@ -1,5 +1,6 @@
 const USERNAME_LOOKUP_URL = 'https://users.roblox.com/v1/usernames/users';
 const AVATAR_THUMBNAIL_URL = 'https://thumbnails.roblox.com/v1/users/avatar-headshot';
+const USER_DETAILS_URL = 'https://users.roblox.com/v1/users';
 
 /**
  * Sprawdza podany nick w publicznym API Roblox (bez logowania).
@@ -59,4 +60,18 @@ async function verifyRobloxUsername(username) {
   return { ...user, avatarUrl };
 }
 
-module.exports = { lookupRobloxUser, getAvatarHeadshotUrl, verifyRobloxUsername };
+/**
+ * Pobiera aktualny opis (bio) profilu Roblox dla danego ID uzytkownika.
+ */
+async function getUserDescription(userId) {
+  const response = await fetch(`${USER_DETAILS_URL}/${userId}`);
+
+  if (!response.ok) {
+    throw new Error(`Roblox API (users) odpowiedzialo statusem ${response.status}`);
+  }
+
+  const payload = await response.json();
+  return payload.description || '';
+}
+
+module.exports = { lookupRobloxUser, getAvatarHeadshotUrl, verifyRobloxUsername, getUserDescription };

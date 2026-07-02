@@ -24,7 +24,7 @@ async function handleSendIdButton(interaction) {
 
 async function handleCancelIdButton(interaction) {
   await interaction.update({
-    content: '❌ Anulowano tworzenie dowodu.',
+    content: '❌ Anulowano.',
     embeds: [],
     components: [],
   });

@@ -8,4 +8,12 @@ module.exports = {
   MODAL_FIELD_AGE: 'age',
   MODAL_FIELD_CITIZENSHIP: 'citizenship',
   MODAL_FIELD_ROBLOX: 'roblox_username',
+
+  // Panel weryfikacji Roblox -> rola. ID roli/Roblox/kod sa zakodowane
+  // wprost w customId (rozdzielone ':'), zeby nie trzymac zadnego stanu
+  // po stronie bota - dziala tez po restarcie bota.
+  VERIFY_START_PREFIX: 'verify_start',
+  VERIFY_MODAL_PREFIX: 'verify_modal',
+  VERIFY_CHECK_PREFIX: 'verify_check',
+  MODAL_FIELD_VERIFY_ROBLOX: 'verify_roblox_username',
 };

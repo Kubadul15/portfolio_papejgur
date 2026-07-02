@@ -1,12 +1,19 @@
 # Emergency Hamburg RP — Bot Discord (Gdańsk RP)
 
-Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępny panel:
+Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępne panele:
 
 - **`/panel stworz-dowod`** — publikuje embed z przyciskiem **"Stwórz Dowód"**. Po kliknięciu gracz wypełnia
   formularz (imię i nazwisko RP, wiek RP, obywatelstwo RP, nick Roblox). Bot weryfikuje nick w publicznym
   API Roblox (prawdziwy avatar + nazwa konta) i pokazuje graczowi prywatny (widoczny tylko dla niego) podgląd
   dowodu z przyciskami **Wyślij** / **Anuluj**. Po kliknięciu "Wyślij" gotowy dowód trafia na skonfigurowany
   kanał docelowy.
+
+- **`/panel weryfikacja kanal:#kanał ranga:@rola`** — publikuje na wskazanym kanale embed z przyciskiem
+  **"Zweryfikuj się"**. Po kliknięciu gracz podaje w formularzu swój nick Roblox — bot pokazuje mu (tylko
+  jemu) prawdziwy avatar/nazwę konta oraz losowy 6-znakowy kod, który trzeba wkleić do opisu (bio) profilu
+  Roblox. Po zapisaniu zmian gracz klika **"Sprawdź kod"** — jeśli kod faktycznie znajduje się w opisie,
+  bot automatycznie nadaje mu skonfigurowaną rolę. Rola i dane weryfikacji są zakodowane w przyciskach, więc
+  nic nie trzeba zapisywać w bazie danych — działa też po restarcie bota.
 
 Kolejne panele (np. `/panel ...`) można dopisywać jako kolejne subkomendy w `src/commands/panel.js`.
 
@@ -98,3 +105,7 @@ płacić). Do stałego działania bota służy Railway opisany w sekcji 2 powyż
 
 Komenda `/panel` wymaga uprawnienia **Zarządzanie serwerem** — widzą i mogą jej użyć tylko
 administratorzy/staff, żeby zwykli gracze nie mogli tworzyć własnych paneli.
+
+Dla `/panel weryfikacja` bot dodatkowo musi mieć uprawnienie **Zarządzaj rolami**, a jego własna
+rola (najwyższa rola bota na liście ról serwera) musi być **wyżej** niż rola nadawana graczom —
+inaczej Discord nie pozwoli botowi jej przyznać i weryfikacja zakończy się błędem.
