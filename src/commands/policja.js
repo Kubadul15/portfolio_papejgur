@@ -5,7 +5,8 @@ const { RANKS, getRankIndex, getRankByIndex, getRankLabel } = require('../data/p
 const { requirePoliceRole, requireCommander, getRankKeyFromRoles } = require('../utils/police');
 const { sendAdminLog } = require('../utils/adminLog');
 const { buildApplicationPanelEmbed } = require('../utils/embeds');
-const { APP_START_PREFIX } = require('../interactions/constants');
+const { POLICE_EXAM_START_PREFIX } = require('../interactions/constants');
+const { POLICE_EXAM_QUESTION_COUNT } = require('../utils/policeExam');
 const {
   buildSprawdzGraczaEmbed,
   buildMandatEmbed,
@@ -22,14 +23,20 @@ const builder = new SlashCommandBuilder()
   .setDescription('System policyjny Emergency Hamburg RP');
 
 builder.addSubcommand((sub) => {
-  sub.setName('setup').setDescription('Konfiguracja ról systemu policyjnego (jednorazowo, tylko admin)');
+  sub
+    .setName('setup')
+    .setDescription('Konfiguracja ról systemu policyjnego (można uruchamiać wielokrotnie, żeby dopisać kolejne rangi)');
   sub.addRoleOption((o) => o.setName('rola-policja').setDescription('Rola dająca dostęp do komend policyjnych').setRequired(true));
+  sub.addRoleOption((o) => o.setName('rola-cbsp').setDescription('Opcjonalna rola specjalnej jednostki CBŚP').setRequired(false));
+  // Wszystkie rangi sa opcjonalne - drabinka ma 21 stopni (za duzo, zeby
+  // wypelnic w jednym wywolaniu), wiec /policja setup mozna uruchomic kilka
+  // razy z rozna czescia rol za kazdym razem (patrz execute() - dopisuje,
+  // a nie nadpisuje calej mapy rankRoleIds).
   RANKS.forEach((rank) => {
     sub.addRoleOption((o) =>
-      o.setName(`ranga-${rank.key}`).setDescription(`Rola odpowiadająca randze: ${rank.label}`).setRequired(true)
+      o.setName(`ranga-${rank.key}`).setDescription(`Rola odpowiadająca randze: ${rank.label}`).setRequired(false)
     );
   });
-  sub.addRoleOption((o) => o.setName('rola-cbsp').setDescription('Opcjonalna rola specjalnej jednostki CBŚP').setRequired(false));
   return sub;
 });
 
@@ -221,15 +228,23 @@ module.exports = {
       const supportRole = interaction.options.getRole('rola-obslugi');
       const acceptRole = interaction.options.getRole('ranga-po-akceptacji');
 
+      const panelId = registry.savePoliceRecruitmentPanel({
+        categoryId: category.id,
+        supportRoleId: supportRole.id,
+        acceptRoleId: acceptRole ? acceptRole.id : null,
+      });
+
       const embed = buildApplicationPanelEmbed(supportRole, {
-        title: '📝 Panel — Rekrutacja do KMP',
-        extraLine: 'Ta rekrutacja dotyczy dołączenia do **Komendy Miejskiej Policji (KMP)**.',
+        title: '🚓 Panel — Rekrutacja do KMP',
+        extraLine:
+          `Ta rekrutacja dotyczy dołączenia do **Komendy Miejskiej Policji (KMP)**. Zanim napiszesz podanie, ` +
+          `musisz najpierw zdać **egzamin wiedzy** (${POLICE_EXAM_QUESTION_COUNT} trudnych pytań, dopuszczalna tylko 1 pomyłka).`,
       });
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId(`${APP_START_PREFIX}:${category.id}:${supportRole.id}:${acceptRole ? acceptRole.id : ''}`)
-          .setLabel('Napisz podanie')
-          .setEmoji('📝')
+          .setCustomId(`${POLICE_EXAM_START_PREFIX}:${panelId}`)
+          .setLabel('Podejdź do rekrutacji')
+          .setEmoji('🚓')
           .setStyle(ButtonStyle.Primary)
       );
 
@@ -256,20 +271,35 @@ module.exports = {
 
       const policeRoleId = interaction.options.getRole('rola-policja').id;
       const cbspRole = interaction.options.getRole('rola-cbsp');
-      const rankRoleIds = {};
+
+      // Dopisujemy tylko podane teraz rangi, nie kasujac tych ustawionych
+      // wczesniejszym wywolaniem - drabinka ma 21 stopni, wiec zwykle trzeba
+      // uzupelniac ja na kilka razy.
+      const newRankRoleIds = {};
       RANKS.forEach((rank) => {
-        rankRoleIds[rank.key] = interaction.options.getRole(`ranga-${rank.key}`).id;
+        const role = interaction.options.getRole(`ranga-${rank.key}`);
+        if (role) newRankRoleIds[rank.key] = role.id;
+      });
+      const mergedRankRoleIds = { ...config.rankRoleIds, ...newRankRoleIds };
+
+      registry.setConfig({
+        policeRoleId,
+        cbspRoleId: cbspRole ? cbspRole.id : config.cbspRoleId,
+        rankRoleIds: mergedRankRoleIds,
       });
 
-      registry.setConfig({ policeRoleId, cbspRoleId: cbspRole ? cbspRole.id : null, rankRoleIds });
+      const rankLines = RANKS.map((rank) => {
+        const roleId = mergedRankRoleIds[rank.key];
+        return `• ${rank.label}: ${roleId ? `<@&${roleId}>` : '⚠️ nieskonfigurowana'}`;
+      }).join('\n');
 
-      const rankLines = RANKS.map((rank) => `• ${rank.label}: <@&${rankRoleIds[rank.key]}>`).join('\n');
       await interaction.reply({
         content:
           `✅ System policyjny skonfigurowany.\n\n` +
           `**Rola dostępu:** <@&${policeRoleId}>\n` +
-          `**CBŚP:** ${cbspRole ? `<@&${cbspRole.id}>` : 'nie skonfigurowano'}\n\n` +
-          `**Drabinka rang:**\n${rankLines}`,
+          `**CBŚP:** ${cbspRole ? `<@&${cbspRole.id}>` : config.cbspRoleId ? `<@&${config.cbspRoleId}>` : 'nie skonfigurowano'}\n\n` +
+          `**Drabinka rang:**\n${rankLines}\n\n` +
+          `ℹ️ Możesz uruchomić \`/policja setup\` ponownie, żeby dopisać kolejne rangi — te już ustawione zostaną zachowane.`,
         ephemeral: true,
       });
       return;

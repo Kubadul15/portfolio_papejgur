@@ -109,15 +109,22 @@ serwer Gdańsk RP). `/panel` nie ma tego ograniczenia — działa normalnie na k
 nawet jeśli zapomnisz go dodać w `GUILD_ID` na Railway — nie trzeba go tam osobno wpisywać.
 
 - **`/policja rekrutacja kanal:#kanał kategoria:<kategoria> rola-obslugi:@rola [ranga-po-akceptacji:@rola]`**
-  — osobny panel rekrutacji, tematycznie oznaczony jako nabór do **Komendy Miejskiej Policji (KMP)**.
-  Działa dokładnie jak `/panel rekrutacja` (ten sam formularz, przyciski przyjęcia/odrzucenia przez select
-  menu, kanały-podania w temacie) — to po prostu druga, osobno oznaczona instancja tego samego mechanizmu,
-  żeby rekrutacja cywilna i policyjna nie mieszały się na jednym panelu.
-- **`/policja setup`** *(wymaga uprawnienia Zarządzanie serwerem, jednorazowo)* — konfiguruje rolę dostępu
-  `@Policja` oraz całą **drabinkę awansów**: Kadet → Posterunkowy → Sierżant → Aspirant → Komisarz →
-  Nadkomisarz → Komendant (7 ról, po jednej na rangę) plus opcjonalną rolę specjalnej jednostki **CBŚP**
-  (przydzielaną osobno, poza drabinką). Wszystko zapisuje się w trwałym rejestrze (patrz niżej) — wystarczy
-  uruchomić raz.
+  — panel naboru do **Komendy Miejskiej Policji (KMP)**. Zanim kandydat w ogóle zobaczy formularz podania,
+  musi najpierw zdać **egzamin wiedzy** — 10 losowych, trudnych pytań z puli ~33 (skróty jednostek: CBŚP,
+  BOA, SPKP, WRD, OPP, BSWP, CSP, KMP, KSP, KGP..., hierarchia stopni, procedury RP) z dopuszczalną tylko
+  **jedną pomyłką**. Dopiero po zdanym egzaminie pojawia się przycisk **Złóż podanie**, który uruchamia
+  dokładnie ten sam formularz co `/panel rekrutacja` (mikrofon, dane, kanał-podanie, przyjęcie/odrzucenie
+  przez select menu). Po oblanym egzaminie obowiązuje **godzinny cooldown** (surowszy niż przy prawie
+  jazdy) zanim można podejść ponownie.
+- **`/policja setup`** *(wymaga uprawnienia Zarządzanie serwerem)* — konfiguruje rolę dostępu `@Policja`
+  oraz całą **drabinkę awansów** — 21 rang na wzór struktury Komendy Stołecznej Policji: Aplikant →
+  Posterunkowy → Starszy Posterunkowy → Sierżant → Starszy Sierżant → Sierżant Sztabowy → Młodszy Aspirant
+  → Aspirant → Starszy Aspirant → Aspirant Sztabowy → Podkomisarz → Komisarz → Nadkomisarz → Podinspektor →
+  Młodszy Inspektor → Inspektor → Nadinspektor → Generalny Inspektor → Asystent/Zastępca/Komendant
+  Stołeczny Policji — plus opcjonalną rolę specjalnej jednostki **CBŚP** (przydzielaną osobno, poza
+  drabinką). **Wszystkie rangi są opcjonalne i można je uzupełniać stopniowo** — `/policja setup` można
+  uruchomić wielokrotnie, każde kolejne wywołanie dopisuje tylko podane role, nie kasując już
+  skonfigurowanych (przydatne, bo wypełnienie 21 ról na raz w jednym poleceniu Discorda jest niewygodne).
 - **`/policja sprawdz-gracza nick:<nick_roblox>`** *(wymaga roli `@Policja`, odpowiedź widoczna dla
   wszystkich na kanale)* — pełny profil gracza po nicku Roblox: dane z dowodu, posiadane kategorie prawa
   jazdy (+ status zawieszenia), zarejestrowane pojazdy, rejestr karny (liczba, suma mandatów, ostatnie 3 z

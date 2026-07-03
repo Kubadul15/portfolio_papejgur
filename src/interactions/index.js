@@ -28,6 +28,8 @@ const { handleMafiaStartButton } = require('./mafiaStartButton');
 const { handleMafiaSizeSelect } = require('./mafiaSizeSelect');
 const { handleMafiaModal } = require('./mafiaModal');
 const { handleMafiaSendButton } = require('./mafiaSendButton');
+const { handlePoliceExamStartButton } = require('./policeExamStartButton');
+const { handlePoliceExamAnswerButton } = require('./policeExamAnswerButton');
 const {
   CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
@@ -60,6 +62,8 @@ const {
   MAFIA_SIZE_PREFIX,
   MAFIA_MODAL_PREFIX,
   MAFIA_SEND_PREFIX,
+  POLICE_EXAM_START_PREFIX,
+  POLICE_EXAM_ANSWER_PREFIX,
 } = require('./constants');
 
 async function routeInteraction(interaction, commands) {
@@ -93,6 +97,8 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${APP_START_PREFIX}:`)) return await handleApplicationStartButton(interaction);
       if (id.startsWith(`${MAFIA_START_PREFIX}:`)) return await handleMafiaStartButton(interaction);
       if (id.startsWith(`${MAFIA_SEND_PREFIX}:`)) return await handleMafiaSendButton(interaction);
+      if (id.startsWith(`${POLICE_EXAM_START_PREFIX}:`)) return await handlePoliceExamStartButton(interaction);
+      if (id.startsWith(`${POLICE_EXAM_ANSWER_PREFIX}:`)) return await handlePoliceExamAnswerButton(interaction);
       return;
     }
 

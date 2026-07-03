@@ -33,6 +33,9 @@ const examCooldown = createCooldown(COOLDOWN_MS);
 const APPLICATION_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h po odrzuconym podaniu
 const applicationCooldown = createCooldown(APPLICATION_COOLDOWN_MS);
 
+const POLICE_EXAM_COOLDOWN_MS = 60 * 60 * 1000; // 1h po oblanym egzaminie do KMP (cięższy niż prawo jazdy)
+const policeExamCooldown = createCooldown(POLICE_EXAM_COOLDOWN_MS);
+
 module.exports = {
   setFailureCooldown: examCooldown.setCooldown,
   getCooldownExpiresAt: examCooldown.getCooldownExpiresAt,
@@ -40,4 +43,7 @@ module.exports = {
   setApplicationRejectionCooldown: applicationCooldown.setCooldown,
   getApplicationCooldownExpiresAt: applicationCooldown.getCooldownExpiresAt,
   APPLICATION_COOLDOWN_MS,
+  setPoliceExamFailureCooldown: policeExamCooldown.setCooldown,
+  getPoliceExamCooldownExpiresAt: policeExamCooldown.getCooldownExpiresAt,
+  POLICE_EXAM_COOLDOWN_MS,
 };

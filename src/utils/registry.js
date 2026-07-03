@@ -21,6 +21,7 @@ function defaultRegistry() {
     },
     robloxIndex: {},
     users: {},
+    policeRecruitmentPanels: {},
   };
 }
 
@@ -32,6 +33,7 @@ function load() {
       config: { ...defaultRegistry().config, ...(parsed.config || {}) },
       robloxIndex: parsed.robloxIndex || {},
       users: parsed.users || {},
+      policeRecruitmentPanels: parsed.policeRecruitmentPanels || {},
     };
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -288,6 +290,24 @@ function setConfig(partial) {
   });
 }
 
+// Discord ograniczaja customId do 100 znakow, a egzamin wiedzy dla KMP musi
+// przeniesc kategorie/role-obslugi/role-po-akceptacji przez ~10 kolejnych
+// przyciskow z pytaniami - trzy pelne snowflaki nie zmiescilyby sie w
+// limicie. Zamiast tego zapisujemy je raz w rejestrze pod krotkim ID, a w
+// customId przyciskow leci tylko ten krotki ID.
+function savePoliceRecruitmentPanel({ categoryId, supportRoleId, acceptRoleId }) {
+  return mutate((data) => {
+    const panelId = Math.random().toString(36).slice(2, 8);
+    data.policeRecruitmentPanels[panelId] = { categoryId, supportRoleId, acceptRoleId: acceptRoleId || null };
+    return panelId;
+  });
+}
+
+function getPoliceRecruitmentPanel(panelId) {
+  const data = load();
+  return data.policeRecruitmentPanels[panelId] || null;
+}
+
 module.exports = {
   linkRoblox,
   findDiscordIdByRobloxNick,
@@ -311,4 +331,6 @@ module.exports = {
   setCbsp,
   getConfig,
   setConfig,
+  savePoliceRecruitmentPanel,
+  getPoliceRecruitmentPanel,
 };

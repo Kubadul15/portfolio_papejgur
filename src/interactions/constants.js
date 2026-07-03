@@ -79,4 +79,13 @@ module.exports = {
   MODAL_FIELD_MAFIA_COOWNER: 'mafia_coowner',
   MODAL_FIELD_MAFIA_NAME: 'mafia_name',
   MODAL_FIELD_MAFIA_COLOR: 'mafia_color',
+
+  // Egzamin wiedzy dla rekrutacji do KMP (/policja rekrutacja). Kategoria i
+  // role docelowe podania sa zapisane w rejestrze pod krotkim panelId (patrz
+  // registry.savePoliceRecruitmentPanel) - customId niesie tylko ten panelId
+  // plus wynik/kolejnosc pytan, zeby zmiescic sie w limicie 100 znakow.
+  // Po zdanym egzaminie przycisk koncowy uzywa APP_START_PREFIX (powyzej),
+  // dzieki czemu dalej dziala dokladnie ten sam mechanizm co /panel rekrutacja.
+  POLICE_EXAM_START_PREFIX: 'police_exam_start',
+  POLICE_EXAM_ANSWER_PREFIX: 'police_exam_ans',
 };
