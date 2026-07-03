@@ -3,7 +3,6 @@ const appConfig = require('../config');
 const registry = require('../utils/registry');
 const { RANKS, getRankIndex, getRankByIndex, getRankLabel } = require('../data/policeRanks');
 const { requirePoliceRole, requireCommander, getRankKeyFromRoles } = require('../utils/police');
-const { sendAdminLog } = require('../utils/adminLog');
 const { buildApplicationPanelEmbed } = require('../utils/embeds');
 const { POLICE_EXAM_START_PREFIX, WRD_EXAM_START_PREFIX } = require('../interactions/constants');
 const { POLICE_EXAM_QUESTION_COUNT } = require('../utils/policeExam');
@@ -463,19 +462,11 @@ module.exports = {
       if (!status.onDuty) {
         registry.startDuty(interaction.user.id, interaction.user.tag);
         const embed = buildSluzbaEmbed({ officer: interaction.user, started: true });
-        await interaction.reply({ embeds: [embed], ephemeral: true });
-        await sendAdminLog(interaction.client, {
-          title: '🟢 Rozpoczęto służbę',
-          description: `**Kto:** <@${interaction.user.id}> (${interaction.user.tag})`,
-        });
+        await interaction.reply({ embeds: [embed] });
       } else {
         const result = registry.endDuty(interaction.user.id, interaction.user.tag);
         const embed = buildSluzbaEmbed({ officer: interaction.user, started: false, durationMs: result.durationMs });
-        await interaction.reply({ embeds: [embed], ephemeral: true });
-        await sendAdminLog(interaction.client, {
-          title: '🔴 Zakończono służbę',
-          description: `**Kto:** <@${interaction.user.id}> (${interaction.user.tag})\n**Czas służby:** ${Math.round(result.durationMs / 60000)} min`,
-        });
+        await interaction.reply({ embeds: [embed] });
       }
       return;
     }

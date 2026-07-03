@@ -146,8 +146,9 @@ nawet jeśli zapomnisz go dodać w `GUILD_ID` na Railway — nie trzeba go tam o
 - **`/policja zawieszenie gracz:@osoba akcja:<Zawieś/Przywróć> [powod]`** *(rola `@Policja`)* — blokuje albo
   przywraca uprawnienia do prowadzenia pojazdów po poważnym wykroczeniu; `sprawdz-gracza` pokazuje wyraźny
   status "ZAWIESZONE".
-- **`/policja sluzba`** *(rola `@Policja`)* — dziennik służby (clock-in/out) dla wywołującego: pierwsze
-  użycie rozpoczyna służbę, drugie ją kończy i dolicza przepracowany czas do statystyk.
+- **`/policja sluzba`** *(rola `@Policja`, odpowiedź widoczna dla wszystkich na kanale)* — dziennik służby
+  (clock-in/out) dla wywołującego: pierwsze użycie rozpoczyna służbę, drugie ją kończy i dolicza
+  przepracowany czas do statystyk.
 - **`/policja ranking`** — publiczny ranking aktywności służbowej (suma godzin, kto aktualnie pełni służbę).
 - **`/policja awans gracz:@osoba`** / **`/policja degradacja gracz:@osoba`** *(Zarządzanie serwerem albo
   ranga Komendanta)* — przesuwa funkcjonariusza o jeden szczebel w górę/dół drabinki, automatycznie
