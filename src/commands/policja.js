@@ -1,8 +1,11 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType } = require('discord.js');
+const appConfig = require('../config');
 const registry = require('../utils/registry');
 const { RANKS, getRankIndex, getRankByIndex, getRankLabel } = require('../data/policeRanks');
 const { requirePoliceRole, requireCommander, getRankKeyFromRoles } = require('../utils/police');
 const { sendAdminLog } = require('../utils/adminLog');
+const { buildApplicationPanelEmbed } = require('../utils/embeds');
+const { APP_START_PREFIX } = require('../interactions/constants');
 const {
   buildSprawdzGraczaEmbed,
   buildMandatEmbed,
@@ -29,6 +32,30 @@ builder.addSubcommand((sub) => {
   sub.addRoleOption((o) => o.setName('rola-cbsp').setDescription('Opcjonalna rola specjalnej jednostki CBŚP').setRequired(false));
   return sub;
 });
+
+builder.addSubcommand((sub) =>
+  sub
+    .setName('rekrutacja')
+    .setDescription('Wysyła panel rekrutacji do Komendy Miejskiej Policji (KMP)')
+    .addChannelOption((o) =>
+      o
+        .setName('kanal')
+        .setDescription('Kanał, na który zostanie wysłany panel rekrutacji do KMP')
+        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+        .setRequired(true)
+    )
+    .addChannelOption((o) =>
+      o
+        .setName('kategoria')
+        .setDescription('Kategoria, w której będą tworzone kanały podań')
+        .addChannelTypes(ChannelType.GuildCategory)
+        .setRequired(true)
+    )
+    .addRoleOption((o) => o.setName('rola-obslugi').setDescription('Rola widząca podania i mogąca je rozpatrywać').setRequired(true))
+    .addRoleOption((o) =>
+      o.setName('ranga-po-akceptacji').setDescription('Opcjonalna rola nadawana automatycznie po przyjęciu do KMP').setRequired(false)
+    )
+);
 
 builder.addSubcommand((sub) =>
   sub
@@ -177,8 +204,49 @@ module.exports = {
   data: builder,
 
   async execute(interaction) {
+    if (interaction.guildId !== appConfig.policeGuildId) {
+      await interaction.reply({
+        content: '❌ System policyjny (`/policja`) jest dostępny tylko na głównym serwerze Emergency Hamburg RP.',
+        ephemeral: true,
+      });
+      return;
+    }
+
     const subcommand = interaction.options.getSubcommand();
     const config = registry.getConfig();
+
+    if (subcommand === 'rekrutacja') {
+      const channel = interaction.options.getChannel('kanal');
+      const category = interaction.options.getChannel('kategoria');
+      const supportRole = interaction.options.getRole('rola-obslugi');
+      const acceptRole = interaction.options.getRole('ranga-po-akceptacji');
+
+      const embed = buildApplicationPanelEmbed(supportRole, {
+        title: '📝 Panel — Rekrutacja do KMP',
+        extraLine: 'Ta rekrutacja dotyczy dołączenia do **Komendy Miejskiej Policji (KMP)**.',
+      });
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${APP_START_PREFIX}:${category.id}:${supportRole.id}:${acceptRole ? acceptRole.id : ''}`)
+          .setLabel('Napisz podanie')
+          .setEmoji('📝')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      try {
+        await channel.send({ embeds: [embed], components: [row] });
+      } catch (error) {
+        console.error('Błąd podczas wysyłania panelu rekrutacji do KMP:', error);
+        await interaction.reply({
+          content: `❌ Nie udało się wysłać panelu na ${channel}. Sprawdź, czy bot ma tam uprawnienia do wysyłania wiadomości.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.reply({ content: `✅ Panel rekrutacji do KMP wysłany na ${channel}.`, ephemeral: true });
+      return;
+    }
 
     if (subcommand === 'setup') {
       if (!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {

@@ -27,4 +27,8 @@ module.exports = {
   // Opcjonalny - jesli nie ustawiony, logowanie administracyjne jest pomijane.
   adminLogChannelId: process.env.ADMIN_LOG_CHANNEL_ID || null,
   registryPath: path.isAbsolute(rawRegistryPath) ? rawRegistryPath : path.join(__dirname, '..', rawRegistryPath),
+  // Bot moze byc zaproszony na wiecej niz jeden serwer, ale caly system
+  // policyjny (/policja) ma dzialac wylacznie na glownym serwerze Gdansk RP -
+  // domyslna wartosc ponizej mozna nadpisac zmienna POLICE_GUILD_ID.
+  policeGuildId: process.env.POLICE_GUILD_ID || '1522536500242284685',
 };
