@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const config = require('./config');
 const panelCommand = require('./commands/panel');
@@ -14,6 +15,15 @@ commands.set(policjaCommand.data.name, policjaCommand);
 
 client.once('ready', () => {
   console.log(`Zalogowano jako ${client.user.tag} — ${config.serverName}`);
+
+  // Diagnostyka trwalego rejestru - jesli po kazdym restarcie widac tu
+  // "plik NIE istnieje", to znaczy, ze REGISTRY_PATH nie wskazuje na
+  // podpiety Railway Volume i dane naprawde znikaja przy kazdym redeployu
+  // (patrz sekcja "Trwaly rejestr danych" w README).
+  const registryExists = fs.existsSync(config.registryPath);
+  console.log(
+    `Rejestr danych: ${config.registryPath} (plik ${registryExists ? 'ISTNIEJE — dane powinny przetrwać restart' : 'NIE istnieje — pierwsze uruchomienie albo brak podpiętego Railway Volume'})`
+  );
 });
 
 client.on('interactionCreate', (interaction) => routeInteraction(interaction, commands));

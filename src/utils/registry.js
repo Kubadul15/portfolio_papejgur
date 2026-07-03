@@ -70,6 +70,7 @@ function defaultUser() {
     idCard: null,
     license: { categories: [], suspended: false, suspendedReason: null, suspendedAt: null },
     vehicles: [],
+    organizations: [],
     citations: [],
     wanted: null,
     police: { rank: null, cbsp: false, dutyStart: null, totalDutyMs: 0 },
@@ -84,9 +85,10 @@ function calculateActivePoints(user, now = Date.now()) {
 }
 
 function ensureUser(data, discordId, discordTag) {
-  if (!data.users[discordId]) {
-    data.users[discordId] = defaultUser();
-  }
+  // Merge z domyslnym uzytkownikiem tez dla juz istniejacych wpisow - dzieki
+  // temu dodanie nowego pola (np. "organizations") w kolejnej wersji bota nie
+  // wywala starszych rekordow zapisanych na dysku przed ta zmiana.
+  data.users[discordId] = { ...defaultUser(), ...(data.users[discordId] || {}) };
   if (discordTag) {
     data.users[discordId].discordTag = discordTag;
   }
@@ -143,6 +145,13 @@ function recordVehicle(discordId, discordTag, { make, year, color, engine, categ
   mutate((data) => {
     const user = ensureUser(data, discordId, discordTag);
     user.vehicles.push({ make, year, color, engine, category, plateNumber, vin, registeredAt: Date.now() });
+  });
+}
+
+function recordMafiaOrg(discordId, discordTag, { name, owner, coOwner, color, size, orgNumber, baseImageUrl }) {
+  mutate((data) => {
+    const user = ensureUser(data, discordId, discordTag);
+    user.organizations.push({ name, owner, coOwner, color, size, orgNumber, baseImageUrl, registeredAt: Date.now() });
   });
 }
 
@@ -286,6 +295,7 @@ module.exports = {
   recordIdCard,
   recordLicenseCategory,
   recordVehicle,
+  recordMafiaOrg,
   addCitation,
   getActivePoints,
   MAX_POINTS_BEFORE_SUSPENSION,

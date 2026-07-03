@@ -1,4 +1,6 @@
 const { sendAdminLog } = require('../utils/adminLog');
+const { getEmbedFieldValue } = require('../utils/embeds');
+const registry = require('../utils/registry');
 const { MAFIA_SEND_PREFIX } = require('./constants');
 
 async function handleMafiaSendButton(interaction) {
@@ -8,6 +10,16 @@ async function handleMafiaSendButton(interaction) {
   try {
     const targetChannel = await interaction.client.channels.fetch(channelId);
     await targetChannel.send({ embeds: [embed] });
+
+    registry.recordMafiaOrg(interaction.user.id, interaction.user.tag, {
+      name: getEmbedFieldValue(embed, 'Nazwa'),
+      owner: getEmbedFieldValue(embed, 'Właściciel'),
+      coOwner: getEmbedFieldValue(embed, 'Współwłaściciel'),
+      color: getEmbedFieldValue(embed, 'Kolor Aut'),
+      size: getEmbedFieldValue(embed, 'Liczba członków'),
+      orgNumber: getEmbedFieldValue(embed, 'Numer organizacji'),
+      baseImageUrl: embed.image ? embed.image.url : null,
+    });
 
     await interaction.update({
       content: `✅ Organizacja została zarejestrowana na kanale <#${channelId}>.`,

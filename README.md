@@ -130,16 +130,24 @@ W odróżnieniu od `/panel` (który tylko **publikuje** panele dla graczy), `/po
 
 ### Trwały rejestr danych (wymaga Railway Volume!)
 
-Wszystkie panele (`stworz-dowod`, `weryfikacja`, `prawojazdy`, `pojazd`) automatycznie zapisują wysłane
-dane do pliku JSON (`src/utils/registry.js`), żeby `/policja sprawdz-gracza` mogło je odnaleźć po nicku
-Roblox. **Railway domyślnie ma efemeryczny dysk — plik zniknie przy każdym redeployu**, jeśli nie podepniesz
-trwałego wolumenu:
+Wszystkie panele (`stworz-dowod`, `weryfikacja`, `prawojazdy`, `pojazd`, `mafia`) oraz cały system
+policyjny (mandaty, punkty karne, lista gończa, zawieszenia, rangi, CBŚP, dziennik służby) automatycznie
+zapisują dane do jednego pliku JSON (`src/utils/registry.js`), żeby `/policja sprawdz-gracza` mogło je
+odnaleźć po nicku Roblox. **To już działa samo z siebie** — problem w tym, że Railway domyślnie ma
+**efemeryczny dysk: cały plik znika przy każdym redeployu** (czyli przy każdym `git push` na `main`, bo to
+właśnie wtedy Railway stawia świeży kontener), jeśli nie podepniesz trwałego wolumenu:
 
 1. W projekcie na Railway: zakładka **Volumes** → **New Volume**.
 2. Ustaw **Mount Path**, np. `/data`.
 3. W zakładce **Variables** dodaj `REGISTRY_PATH=/data/registry.json` (musi wskazywać na plik **wewnątrz**
-   zamontowanego wolumenu).
+   zamontowanego wolumenu — sama zmienna bez wolumenu nic nie da).
 4. Redeployuj — od teraz rejestr przetrwa restarty i kolejne deploye.
+
+**Jak sprawdzić, czy to faktycznie działa:** po starcie bota w logach (Railway → Deployments → View Logs)
+pojawia się linijka `Rejestr danych: <ścieżka> (plik ISTNIEJE / NIE istnieje...)`. Jeśli po kilku
+redeployach ciągle widzisz "NIE istnieje", to `REGISTRY_PATH` nie wskazuje faktycznie na zamontowany
+wolumen (albo wolumen w ogóle nie jest podpięty) — dane bez tego **zawsze** będą się zerować, niezależnie
+od tego, czy trzymane są w JSON czy YAML — to ograniczenie hostingu, a nie formatu pliku.
 
 Bez tego kroku bot nadal działa normalnie (wszystkie panele i komendy `/policja` też), ale rejestr
 resetuje się przy każdym redeployu z Railwaya.

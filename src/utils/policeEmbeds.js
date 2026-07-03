@@ -61,6 +61,11 @@ function buildSprawdzGraczaEmbed({ nick, discordId, record, activePoints }) {
     embed.addFields({ name: '🚙 Pojazdy', value: 'Brak zarejestrowanych pojazdów.', inline: false });
   }
 
+  if (record.organizations && record.organizations.length > 0) {
+    const orgsText = record.organizations.map((o) => `• **${o.name}** — \`${o.orgNumber}\``).join('\n');
+    embed.addFields({ name: `🔫 Organizacje (${record.organizations.length})`, value: orgsText, inline: false });
+  }
+
   if (record.citations.length > 0) {
     const total = record.citations.reduce((sum, c) => sum + Number(c.amount || 0), 0);
     const lastCitations = record.citations
