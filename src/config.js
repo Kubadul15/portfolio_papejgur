@@ -21,6 +21,15 @@ const rawRegistryPath = process.env.REGISTRY_PATH || 'data/registry.json';
 // domyslna wartosc ponizej mozna nadpisac zmienna POLICE_GUILD_ID.
 const policeGuildId = process.env.POLICE_GUILD_ID || '1522536500242284685';
 
+// Odwrotna sytuacja: /robloxban ma dzialac wylacznie na "starym" serwerze
+// (tym sprzed dodania serwera policyjnego), niezaleznie od tego, na ilu
+// serwerach bot jest obecny.
+const legacyGuildId = process.env.LEGACY_GUILD_ID || '1521870662162190388';
+
+// Kanal, na ktory /robloxban wysyla embed z banem - mozna nadpisac
+// zmienna ROBLOX_BAN_CHANNEL_ID.
+const robloxBanChannelId = process.env.ROBLOX_BAN_CHANNEL_ID || '1522589245267644557';
+
 // GUILD_ID moze byc jednym ID albo lista ID rozdzielona przecinkami, jesli
 // bot ma dzialac (i miec zarejestrowane slash commands) na wiecej niz jednym
 // serwerze - patrz deploy-commands.js, ktore rejestruje komendy na kazdym
@@ -50,4 +59,6 @@ module.exports = {
   adminLogChannelId: process.env.ADMIN_LOG_CHANNEL_ID || null,
   registryPath: path.isAbsolute(rawRegistryPath) ? rawRegistryPath : path.join(__dirname, '..', rawRegistryPath),
   policeGuildId,
+  legacyGuildId,
+  robloxBanChannelId,
 };

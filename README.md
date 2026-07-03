@@ -208,6 +208,20 @@ Opcjonalnie: jeśli ustawisz zmienną `ADMIN_LOG_CHANNEL_ID`, bot będzie wysył
 wysłanego dowodu, udanej weryfikacji Roblox oraz wyniku (zdany/niezdany) egzaminu na prawo jazdy — razem z
 tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
 
+## Ban na Robloxie (`/robloxban`)
+
+**`/robloxban nick:<nick_roblox> czas:<liczba_dni_lub_perm> powod:<opis>`** *(wymaga uprawnienia Discorda
+Blokuj użytkowników)* — wystawia ban na podany nick Roblox i publikuje kartę bana na stałym kanale logów
+(`ROBLOX_BAN_CHANNEL_ID`, domyślnie już ustawiony). Bot próbuje zweryfikować nick w publicznym API Roblox
+(prawdziwy avatar i link do profilu) — jeśli konto nie istnieje, karta i tak zostanie wysłana z wyraźnym
+ostrzeżeniem. W polu `czas` podaj liczbę dni (np. `7`) albo słowo `perm` dla bana permanentnego.
+
+**Odwrotne ograniczenie serwera niż `/policja`:** ta komenda działa wyłącznie na "starym" serwerze — tym,
+na którym bot był, zanim doszedł drugi, policyjny serwer. Serwer ten ustawia się zmienną `LEGACY_GUILD_ID`
+(domyślnie już skonfigurowana). Na każdym innym serwerze (w tym na serwerze policyjnym) komenda grzecznie
+odmówi działania — dokładnie tak samo jak `/policja` odmawia działania poza swoim serwerem, tylko
+odwrotnie.
+
 ## Wymagania
 
 - Node.js 20+
@@ -250,6 +264,8 @@ tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
    | `ADMIN_LOG_CHANNEL_ID` | opcjonalnie — ID kanału logów administracyjnych |
    | `REGISTRY_PATH` | opcjonalnie — ścieżka trwałego rejestru; ustaw dopiero po podpięciu Volume (patrz sekcja "System Policyjny" niżej) |
    | `POLICE_GUILD_ID` | opcjonalnie — ID serwera, na którym ma działać `/policja`; domyślnie już ustawione na główny serwer |
+   | `LEGACY_GUILD_ID` | opcjonalnie — ID "starego" serwera, na którym ma działać `/robloxban`; domyślnie już ustawione |
+   | `ROBLOX_BAN_CHANNEL_ID` | opcjonalnie — ID kanału logów banów dla `/robloxban`; domyślnie już ustawione |
 
 5. Po zapisaniu zmiennych Railway zbuduje i uruchomi bota. `npm start` najpierw rejestruje/aktualizuje
    komendy slash (`node src/deploy-commands.js`), a potem startuje bota (`node src/index.js`) —
