@@ -1,6 +1,7 @@
 const config = require('../config');
 const { sendAdminLog } = require('../utils/adminLog');
 const { getEmbedFieldValue } = require('../utils/embeds');
+const registry = require('../utils/registry');
 
 async function handleSendIdButton(interaction) {
   const embed = interaction.message.embeds[0];
@@ -8,6 +9,21 @@ async function handleSendIdButton(interaction) {
   try {
     const targetChannel = await interaction.client.channels.fetch(config.targetChannelId);
     await targetChannel.send({ embeds: [embed] });
+
+    const fullName = getEmbedFieldValue(embed, 'Dane');
+    const age = getEmbedFieldValue(embed, 'Wiek');
+    const citizenship = getEmbedFieldValue(embed, 'Obywatelstwo');
+    const idNumber = getEmbedFieldValue(embed, 'Numer');
+    const robloxMatch = /\[@(.+?)\]/.exec(getEmbedFieldValue(embed, 'Nick Roblox'));
+    if (robloxMatch) {
+      registry.recordIdCard(interaction.user.id, interaction.user.tag, {
+        fullName,
+        age,
+        citizenship,
+        idNumber,
+        robloxUsername: robloxMatch[1],
+      });
+    }
 
     let roleNote = '';
     const roleFieldValue = getEmbedFieldValue(embed, 'Rola po wysłaniu');

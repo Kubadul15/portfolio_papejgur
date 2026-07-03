@@ -1,3 +1,5 @@
+const { getEmbedFieldValue } = require('../utils/embeds');
+const registry = require('../utils/registry');
 const { EXAM_SEND_PREFIX } = require('./constants');
 
 async function handleExamSendButton(interaction) {
@@ -7,6 +9,17 @@ async function handleExamSendButton(interaction) {
   try {
     const targetChannel = await interaction.client.channels.fetch(channelId);
     await targetChannel.send({ embeds: [embed] });
+
+    const category = getEmbedFieldValue(embed, 'Kategoria');
+    const licenseNumber = getEmbedFieldValue(embed, 'Numer');
+    const robloxMatch = /\[@(.+?)\]/.exec(getEmbedFieldValue(embed, 'Nick Roblox'));
+    if (robloxMatch) {
+      registry.recordLicenseCategory(interaction.user.id, interaction.user.tag, {
+        category,
+        licenseNumber,
+        robloxUsername: robloxMatch[1],
+      });
+    }
 
     await interaction.update({
       content: `✅ Prawo jazdy zostało wysłane na kanał <#${channelId}>.`,

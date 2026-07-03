@@ -1,8 +1,9 @@
 const { REST, Routes } = require('discord.js');
 const config = require('./config');
 const panelCommand = require('./commands/panel');
+const policjaCommand = require('./commands/policja');
 
-const commands = [panelCommand.data.toJSON()];
+const commands = [panelCommand.data.toJSON(), policjaCommand.data.toJSON()];
 
 const rest = new REST().setToken(config.discordToken);
 

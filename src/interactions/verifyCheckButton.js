@@ -1,5 +1,7 @@
 const { getUserDescription } = require('../utils/roblox');
 const { sendAdminLog } = require('../utils/adminLog');
+const { getEmbedFieldValue } = require('../utils/embeds');
+const registry = require('../utils/registry');
 
 async function handleVerifyCheckButton(interaction) {
   await interaction.deferUpdate();
@@ -40,6 +42,11 @@ async function handleVerifyCheckButton(interaction) {
       ephemeral: true,
     });
     return;
+  }
+
+  const robloxMatch = /\[@(.+?)\]/.exec(getEmbedFieldValue(interaction.message.embeds[0], 'Konto Roblox'));
+  if (robloxMatch) {
+    registry.linkRoblox(interaction.user.id, interaction.user.tag, robloxMatch[1]);
   }
 
   await interaction.editReply({

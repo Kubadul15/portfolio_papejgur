@@ -1,3 +1,4 @@
+const path = require('path');
 require('dotenv').config();
 
 function requireEnv(name) {
@@ -7,6 +8,13 @@ function requireEnv(name) {
   }
   return value;
 }
+
+// Domyslnie plik trzymany jest w repo (data/registry.json) - to dziala
+// lokalnie, ale na Railway dysk jest efemeryczny i znika przy kazdym
+// redeployu. Aby rejestr (dowody/prawa jazdy/pojazdy/system policyjny)
+// przetrwal redeploy, trzeba podpiac Railway Volume i ustawic REGISTRY_PATH
+// na sciezke montowania (np. /data/registry.json) - patrz README.
+const rawRegistryPath = process.env.REGISTRY_PATH || 'data/registry.json';
 
 module.exports = {
   discordToken: requireEnv('DISCORD_TOKEN'),
@@ -18,4 +26,5 @@ module.exports = {
   embedColor: process.env.EMBED_COLOR || '#8b5cf6',
   // Opcjonalny - jesli nie ustawiony, logowanie administracyjne jest pomijane.
   adminLogChannelId: process.env.ADMIN_LOG_CHANNEL_ID || null,
+  registryPath: path.isAbsolute(rawRegistryPath) ? rawRegistryPath : path.join(__dirname, '..', rawRegistryPath),
 };

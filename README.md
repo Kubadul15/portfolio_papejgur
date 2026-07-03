@@ -1,6 +1,6 @@
 # Emergency Hamburg RP — Bot Discord (Gdańsk RP)
 
-Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępne panele:
+Bot Discord do obsługi paneli weryfikacyjnych serwera oraz systemu policyjnego RP. Aktualnie dostępne panele:
 
 - **`/panel stworz-dowod [ranga:@rola]`** — publikuje embed z przyciskiem **"Stwórz Dowód"**. Po kliknięciu
   gracz wypełnia formularz (imię i nazwisko RP, wiek RP, obywatelstwo RP, nick Roblox). **Wiek musi być
@@ -93,6 +93,53 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępne pane
   skonfigurowany kanał `kanal`. Wymaga, żeby gracz miał włączone wiadomości prywatne od członków serwera —
   bot informuje o tym, jeśli nie może wysłać DM.
 
+## System Policyjny (`/policja`)
+
+W odróżnieniu od `/panel` (który tylko **publikuje** panele dla graczy), `/policja` to zestaw komend
+**akcji** wykonywanych przez funkcjonariuszy — dlatego żyje jako osobna komenda z własnymi podkomendami
+(nadal jedna komenda, `nie osobne komendy` na każdą funkcję):
+
+- **`/policja setup`** *(wymaga uprawnienia Zarządzanie serwerem, jednorazowo)* — konfiguruje rolę dostępu
+  `@Policja` oraz całą **drabinkę awansów**: Kadet → Posterunkowy → Sierżant → Aspirant → Komisarz →
+  Nadkomisarz → Komendant (7 ról, po jednej na rangę) plus opcjonalną rolę specjalnej jednostki **CBŚP**
+  (przydzielaną osobno, poza drabinką). Wszystko zapisuje się w trwałym rejestrze (patrz niżej) — wystarczy
+  uruchomić raz.
+- **`/policja sprawdz-gracza nick:<nick_roblox`** *(wymaga roli `@Policja`)* — pełny profil gracza po nicku
+  Roblox: dane z dowodu, posiadane kategorie prawa jazdy (+ status zawieszenia), zarejestrowane pojazdy,
+  rejestr karny (liczba i suma mandatów, ostatnie 3), status na liście gończej, a jeśli sam jest
+  funkcjonariuszem — jego rangę i przynależność do CBŚP.
+- **`/policja mandat gracz:@osoba kwota:<zł> powod:<opis>`** *(rola `@Policja`)* — wystawia mandat, trafia do
+  rejestru karnego gracza i jest widoczny w `sprawdz-gracza`.
+- **`/policja goniony gracz:@osoba akcja:<Dodaj/Usuń> [powod]`** *(rola `@Policja`)* — ogłasza lub zdejmuje
+  list gończy (np. po zatrzymaniu); status widoczny w `sprawdz-gracza`.
+- **`/policja zawieszenie gracz:@osoba akcja:<Zawieś/Przywróć> [powod]`** *(rola `@Policja`)* — blokuje albo
+  przywraca uprawnienia do prowadzenia pojazdów po poważnym wykroczeniu; `sprawdz-gracza` pokazuje wyraźny
+  status "ZAWIESZONE".
+- **`/policja sluzba`** *(rola `@Policja`)* — dziennik służby (clock-in/out) dla wywołującego: pierwsze
+  użycie rozpoczyna służbę, drugie ją kończy i dolicza przepracowany czas do statystyk.
+- **`/policja ranking`** — publiczny ranking aktywności służbowej (suma godzin, kto aktualnie pełni służbę).
+- **`/policja awans gracz:@osoba`** / **`/policja degradacja gracz:@osoba`** *(Zarządzanie serwerem albo
+  ranga Komendanta)* — przesuwa funkcjonariusza o jeden szczebel w górę/dół drabinki, automatycznie
+  zdejmując starą i nadając nową rolę rangi.
+- **`/policja cbsp gracz:@osoba akcja:<Dodaj/Usuń>`** *(Zarządzanie serwerem albo ranga Komendanta)* —
+  przydziela lub odbiera przynależność do CBŚP, niezależnie od rangi na drabince.
+
+### Trwały rejestr danych (wymaga Railway Volume!)
+
+Wszystkie panele (`stworz-dowod`, `weryfikacja`, `prawojazdy`, `pojazd`) automatycznie zapisują wysłane
+dane do pliku JSON (`src/utils/registry.js`), żeby `/policja sprawdz-gracza` mogło je odnaleźć po nicku
+Roblox. **Railway domyślnie ma efemeryczny dysk — plik zniknie przy każdym redeployu**, jeśli nie podepniesz
+trwałego wolumenu:
+
+1. W projekcie na Railway: zakładka **Volumes** → **New Volume**.
+2. Ustaw **Mount Path**, np. `/data`.
+3. W zakładce **Variables** dodaj `REGISTRY_PATH=/data/registry.json` (musi wskazywać na plik **wewnątrz**
+   zamontowanego wolumenu).
+4. Redeployuj — od teraz rejestr przetrwa restarty i kolejne deploye.
+
+Bez tego kroku bot nadal działa normalnie (wszystkie panele i komendy `/policja` też), ale rejestr
+resetuje się przy każdym redeployu z Railwaya.
+
 ### Realistyczny łańcuch wymagań
 
 Panele można spiąć w logiczny ciąg zależności, tak żeby nie dało się "przeskoczyć" etapów:
@@ -159,6 +206,7 @@ tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
    | `SERVER_NAME` | np. `Emergency Hamburg ROLEPLAY \| Gdańsk RP` |
    | `EMBED_COLOR` | np. `#8b5cf6` |
    | `ADMIN_LOG_CHANNEL_ID` | opcjonalnie — ID kanału logów administracyjnych |
+   | `REGISTRY_PATH` | opcjonalnie — ścieżka trwałego rejestru; ustaw dopiero po podpięciu Volume (patrz sekcja "System Policyjny" niżej) |
 
 5. Po zapisaniu zmiennych Railway zbuduje i uruchomi bota. `npm start` najpierw rejestruje/aktualizuje
    komendy slash (`node src/deploy-commands.js`), a potem startuje bota (`node src/index.js`) —
@@ -221,3 +269,10 @@ uprawnienie **Zarządzaj rolami**, a jego własna rola (najwyższa rola bota na 
 Dla `/panel tickety` bot musi mieć uprawnienie **Zarządzaj kanałami** (tworzenie/usuwanie kanałów
 ticketów i edycja ich uprawnień) oraz włączony **Message Content Intent** (patrz krok 4 w sekcji 1) —
 bez niego transkrypt przy zamknięciu ticketu będzie pusty.
+
+Komenda `/policja` nie ma globalnego ograniczenia uprawnień (żeby zwykli funkcjonariusze mogli używać
+`sprawdz-gracza`/`mandat`/`sluzba`) — dostęp jest sprawdzany w kodzie na podstawie roli `@Policja`
+skonfigurowanej przez `/policja setup`. Podkomendy `setup`, `awans`, `degradacja` i `cbsp` dodatkowo
+wymagają uprawnienia **Zarządzanie serwerem** albo posiadania rangi **Komendanta**. Do zmiany rang i CBŚP
+bot musi mieć uprawnienie **Zarządzaj rolami**, a jego rola musi być **wyżej** niż wszystkie role rang i
+rola CBŚP na liście ról serwera.
