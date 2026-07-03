@@ -6,7 +6,6 @@ const {
   MODAL_FIELD_MAFIA_COOWNER,
   MODAL_FIELD_MAFIA_NAME,
   MODAL_FIELD_MAFIA_COLOR,
-  MODAL_FIELD_MAFIA_BASE,
 } = require('./constants');
 
 async function handleMafiaSizeSelect(interaction) {
@@ -45,19 +44,11 @@ async function handleMafiaSizeSelect(interaction) {
     .setMaxLength(30)
     .setRequired(true);
 
-  const baseInput = new TextInputBuilder()
-    .setCustomId(MODAL_FIELD_MAFIA_BASE)
-    .setLabel('Baza (link do zdjęcia mapy)')
-    .setStyle(TextInputStyle.Paragraph)
-    .setMaxLength(300)
-    .setRequired(true);
-
   modal.addComponents(
     new ActionRowBuilder().addComponents(ownerInput),
     new ActionRowBuilder().addComponents(coOwnerInput),
     new ActionRowBuilder().addComponents(nameInput),
-    new ActionRowBuilder().addComponents(colorInput),
-    new ActionRowBuilder().addComponents(baseInput)
+    new ActionRowBuilder().addComponents(colorInput)
   );
 
   await interaction.showModal(modal);

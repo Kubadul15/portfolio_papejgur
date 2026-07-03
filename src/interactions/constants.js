@@ -79,5 +79,4 @@ module.exports = {
   MODAL_FIELD_MAFIA_COOWNER: 'mafia_coowner',
   MODAL_FIELD_MAFIA_NAME: 'mafia_name',
   MODAL_FIELD_MAFIA_COLOR: 'mafia_color',
-  MODAL_FIELD_MAFIA_BASE: 'mafia_base',
 };
