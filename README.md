@@ -116,6 +116,12 @@ nawet jeśli zapomnisz go dodać w `GUILD_ID` na Railway — nie trzeba go tam o
   dokładnie ten sam formularz co `/panel rekrutacja` (mikrofon, dane, kanał-podanie, przyjęcie/odrzucenie
   przez select menu). Po oblanym egzaminie obowiązuje **godzinny cooldown** (surowszy niż przy prawie
   jazdy) zanim można podejść ponownie.
+- **`/policja rekrutacja-wrd kanal:#kanał kategoria:<kategoria> rola-obslugi:@rola [ranga-po-akceptacji:@rola]`**
+  — osobny, lżejszy panel naboru do **Wydziału Ruchu Drogowego (WRD)** w ramach KMP. Zamiast trudnego
+  egzaminu do KMP, kandydat zdaje **egzamin podstawowy** — 8 pytań z puli 16, skupionych na ruchu drogowym
+  (ograniczenia prędkości, kontrola drogowa, sygnalizacja, różnica kolizja/wypadek), z dopuszczalnymi
+  **dwiema pomyłkami** i krótszym, 20-minutowym cooldownem po oblaniu. Poza tym działa identycznie —
+  po zdaniu ten sam formularz podania co w pozostałych rekrutacjach.
 - **`/policja setup`** *(wymaga uprawnienia Zarządzanie serwerem)* — konfiguruje rolę dostępu `@Policja`
   oraz całą **drabinkę awansów** — 21 rang na wzór struktury Komendy Stołecznej Policji: Aplikant →
   Posterunkowy → Starszy Posterunkowy → Sierżant → Starszy Sierżant → Sierżant Sztabowy → Młodszy Aspirant

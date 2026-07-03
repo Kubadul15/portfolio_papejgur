@@ -36,6 +36,9 @@ const applicationCooldown = createCooldown(APPLICATION_COOLDOWN_MS);
 const POLICE_EXAM_COOLDOWN_MS = 60 * 60 * 1000; // 1h po oblanym egzaminie do KMP (cięższy niż prawo jazdy)
 const policeExamCooldown = createCooldown(POLICE_EXAM_COOLDOWN_MS);
 
+const WRD_EXAM_COOLDOWN_MS = 20 * 60 * 1000; // 20 minut po oblanym egzaminie podstawowym do WRD
+const wrdExamCooldown = createCooldown(WRD_EXAM_COOLDOWN_MS);
+
 module.exports = {
   setFailureCooldown: examCooldown.setCooldown,
   getCooldownExpiresAt: examCooldown.getCooldownExpiresAt,
@@ -46,4 +49,7 @@ module.exports = {
   setPoliceExamFailureCooldown: policeExamCooldown.setCooldown,
   getPoliceExamCooldownExpiresAt: policeExamCooldown.getCooldownExpiresAt,
   POLICE_EXAM_COOLDOWN_MS,
+  setWrdExamFailureCooldown: wrdExamCooldown.setCooldown,
+  getWrdExamCooldownExpiresAt: wrdExamCooldown.getCooldownExpiresAt,
+  WRD_EXAM_COOLDOWN_MS,
 };

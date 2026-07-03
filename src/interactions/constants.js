@@ -88,4 +88,10 @@ module.exports = {
   // dzieki czemu dalej dziala dokladnie ten sam mechanizm co /panel rekrutacja.
   POLICE_EXAM_START_PREFIX: 'police_exam_start',
   POLICE_EXAM_ANSWER_PREFIX: 'police_exam_ans',
+
+  // Osobna, lzejsza rekrutacja do WRD (Wydzial Ruchu Drogowego) w ramach
+  // KMP - ten sam mechanizm co powyzej (panelId z rejestru, handoff do
+  // APP_START_PREFIX po zdaniu), ale z innym, prostszym pytaniom.
+  WRD_EXAM_START_PREFIX: 'wrd_exam_start',
+  WRD_EXAM_ANSWER_PREFIX: 'wrd_exam_ans',
 };

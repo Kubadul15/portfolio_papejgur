@@ -5,8 +5,9 @@ const { RANKS, getRankIndex, getRankByIndex, getRankLabel } = require('../data/p
 const { requirePoliceRole, requireCommander, getRankKeyFromRoles } = require('../utils/police');
 const { sendAdminLog } = require('../utils/adminLog');
 const { buildApplicationPanelEmbed } = require('../utils/embeds');
-const { POLICE_EXAM_START_PREFIX } = require('../interactions/constants');
+const { POLICE_EXAM_START_PREFIX, WRD_EXAM_START_PREFIX } = require('../interactions/constants');
 const { POLICE_EXAM_QUESTION_COUNT } = require('../utils/policeExam');
+const { WRD_EXAM_QUESTION_COUNT } = require('../utils/wrdExam');
 const {
   buildSprawdzGraczaEmbed,
   buildMandatEmbed,
@@ -61,6 +62,30 @@ builder.addSubcommand((sub) =>
     .addRoleOption((o) => o.setName('rola-obslugi').setDescription('Rola widząca podania i mogąca je rozpatrywać').setRequired(true))
     .addRoleOption((o) =>
       o.setName('ranga-po-akceptacji').setDescription('Opcjonalna rola nadawana automatycznie po przyjęciu do KMP').setRequired(false)
+    )
+);
+
+builder.addSubcommand((sub) =>
+  sub
+    .setName('rekrutacja-wrd')
+    .setDescription('Wysyła panel rekrutacji do Wydziału Ruchu Drogowego (WRD) w ramach KMP')
+    .addChannelOption((o) =>
+      o
+        .setName('kanal')
+        .setDescription('Kanał, na który zostanie wysłany panel rekrutacji do WRD')
+        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+        .setRequired(true)
+    )
+    .addChannelOption((o) =>
+      o
+        .setName('kategoria')
+        .setDescription('Kategoria, w której będą tworzone kanały podań')
+        .addChannelTypes(ChannelType.GuildCategory)
+        .setRequired(true)
+    )
+    .addRoleOption((o) => o.setName('rola-obslugi').setDescription('Rola widząca podania i mogąca je rozpatrywać').setRequired(true))
+    .addRoleOption((o) =>
+      o.setName('ranga-po-akceptacji').setDescription('Opcjonalna rola nadawana automatycznie po przyjęciu do WRD').setRequired(false)
     )
 );
 
@@ -260,6 +285,47 @@ module.exports = {
       }
 
       await interaction.reply({ content: `✅ Panel rekrutacji do KMP wysłany na ${channel}.`, ephemeral: true });
+      return;
+    }
+
+    if (subcommand === 'rekrutacja-wrd') {
+      const channel = interaction.options.getChannel('kanal');
+      const category = interaction.options.getChannel('kategoria');
+      const supportRole = interaction.options.getRole('rola-obslugi');
+      const acceptRole = interaction.options.getRole('ranga-po-akceptacji');
+
+      const panelId = registry.savePoliceRecruitmentPanel({
+        categoryId: category.id,
+        supportRoleId: supportRole.id,
+        acceptRoleId: acceptRole ? acceptRole.id : null,
+      });
+
+      const embed = buildApplicationPanelEmbed(supportRole, {
+        title: '🚦 Panel — Rekrutacja do WRD',
+        extraLine:
+          `Ta rekrutacja dotyczy dołączenia do **Wydziału Ruchu Drogowego (WRD)** w ramach KMP. Zanim napiszesz ` +
+          `podanie, musisz najpierw zdać **egzamin podstawowy** (${WRD_EXAM_QUESTION_COUNT} pytań o ruchu drogowym, dopuszczalne 2 pomyłki).`,
+      });
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${WRD_EXAM_START_PREFIX}:${panelId}`)
+          .setLabel('Podejdź do rekrutacji')
+          .setEmoji('🚦')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      try {
+        await channel.send({ embeds: [embed], components: [row] });
+      } catch (error) {
+        console.error('Błąd podczas wysyłania panelu rekrutacji do WRD:', error);
+        await interaction.reply({
+          content: `❌ Nie udało się wysłać panelu na ${channel}. Sprawdź, czy bot ma tam uprawnienia do wysyłania wiadomości.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.reply({ content: `✅ Panel rekrutacji do WRD wysłany na ${channel}.`, ephemeral: true });
       return;
     }
 
