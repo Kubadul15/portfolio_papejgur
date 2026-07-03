@@ -68,4 +68,16 @@ module.exports = {
   MODAL_FIELD_APP_FOUND_VIA: 'app_found_via',
   MODAL_FIELD_APP_HOURS: 'app_hours',
   MODAL_FIELD_APP_REJECT_REASON: 'app_reject_reason',
+
+  // Panel rejestracji Mafii/Gangu. Kanal docelowy jest kodowany w
+  // customId, tak jak w pojezdzie/prawie jazdy - bez bazy danych.
+  MAFIA_START_PREFIX: 'mafia_start',
+  MAFIA_SIZE_PREFIX: 'mafia_size',
+  MAFIA_MODAL_PREFIX: 'mafia_modal',
+  MAFIA_SEND_PREFIX: 'mafia_send',
+  MODAL_FIELD_MAFIA_OWNER: 'mafia_owner',
+  MODAL_FIELD_MAFIA_COOWNER: 'mafia_coowner',
+  MODAL_FIELD_MAFIA_NAME: 'mafia_name',
+  MODAL_FIELD_MAFIA_COLOR: 'mafia_color',
+  MODAL_FIELD_MAFIA_BASE: 'mafia_base',
 };
