@@ -82,6 +82,14 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera. Aktualnie dostępne pane
 
   Tak jak w tickecie, cały stan (właściciel, obie role, status) jest w temacie kanału — zero bazy danych.
 
+- **`/panel mafia kanal:#kanał`** — publikuje embed z przyciskiem **"🔫 Stwórz Organizację"** w bieżącym
+  kanale. Klik → select menu "Ile osób jest w organizacji?" (opcje 3–10 oraz "10+", więc minimum 3 osoby
+  jest wymuszone samą listą wyboru, bez możliwości ominięcia), potem modal: Właściciel Mafii/Gangu,
+  Współwłaściciel Mafii/Gangu, Nazwa Mafii/Gangu, Kolor Aut, Baza (link do zdjęcia mapy). Bot pokazuje
+  prywatny podgląd karty organizacji (z automatycznie wygenerowanym numerem, np. `MG-4821`) z przyciskami
+  **Wyślij** / **Anuluj** — jeśli pole "Baza" zawiera link `http(s)://`, zdjęcie mapy pokazuje się od razu w
+  embedzie. Po kliknięciu "Wyślij" karta trafia na skonfigurowany kanał `kanal`.
+
 ### Realistyczny łańcuch wymagań
 
 Panele można spiąć w logiczny ciąg zależności, tak żeby nie dało się "przeskoczyć" etapów:

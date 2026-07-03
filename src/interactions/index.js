@@ -24,6 +24,10 @@ const { handleApplicationMicSelect } = require('./applicationMicSelect');
 const { handleApplicationModal } = require('./applicationModal');
 const { handleApplicationReviewSelect } = require('./applicationReviewSelect');
 const { handleApplicationRejectModal } = require('./applicationRejectModal');
+const { handleMafiaStartButton } = require('./mafiaStartButton');
+const { handleMafiaSizeSelect } = require('./mafiaSizeSelect');
+const { handleMafiaModal } = require('./mafiaModal');
+const { handleMafiaSendButton } = require('./mafiaSendButton');
 const {
   CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
@@ -52,6 +56,10 @@ const {
   APP_MODAL_PREFIX,
   APP_REVIEW_SELECT_ID,
   APP_REJECT_MODAL_ID,
+  MAFIA_START_PREFIX,
+  MAFIA_SIZE_PREFIX,
+  MAFIA_MODAL_PREFIX,
+  MAFIA_SEND_PREFIX,
 } = require('./constants');
 
 async function routeInteraction(interaction, commands) {
@@ -83,6 +91,8 @@ async function routeInteraction(interaction, commands) {
       if (id === TICKET_ADD_USER_BUTTON_ID) return await handleTicketAddUserButton(interaction);
       if (id === TICKET_CLOSE_BUTTON_ID) return await handleTicketCloseButton(interaction);
       if (id.startsWith(`${APP_START_PREFIX}:`)) return await handleApplicationStartButton(interaction);
+      if (id.startsWith(`${MAFIA_START_PREFIX}:`)) return await handleMafiaStartButton(interaction);
+      if (id.startsWith(`${MAFIA_SEND_PREFIX}:`)) return await handleMafiaSendButton(interaction);
       return;
     }
 
@@ -93,6 +103,7 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${VEHICLE_CATEGORY_PREFIX}:`)) return await handleVehicleCategorySelect(interaction);
       if (id.startsWith(`${APP_MIC_SELECT_PREFIX}:`)) return await handleApplicationMicSelect(interaction);
       if (id === APP_REVIEW_SELECT_ID) return await handleApplicationReviewSelect(interaction);
+      if (id.startsWith(`${MAFIA_SIZE_PREFIX}:`)) return await handleMafiaSizeSelect(interaction);
       return;
     }
 
@@ -113,6 +124,7 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${TICKET_MODAL_PREFIX}:`)) return await handleTicketModal(interaction);
       if (id.startsWith(`${APP_MODAL_PREFIX}:`)) return await handleApplicationModal(interaction);
       if (id === APP_REJECT_MODAL_ID) return await handleApplicationRejectModal(interaction);
+      if (id.startsWith(`${MAFIA_MODAL_PREFIX}:`)) return await handleMafiaModal(interaction);
     }
   } catch (error) {
     console.error('Błąd podczas obsługi interakcji:', error);

@@ -13,6 +13,7 @@ const {
   buildVehiclePanelEmbed,
   buildTicketPanelEmbed,
   buildApplicationPanelEmbed,
+  buildMafiaPanelEmbed,
 } = require('../utils/embeds');
 const {
   CREATE_ID_BUTTON_ID,
@@ -21,6 +22,7 @@ const {
   VEHICLE_START_PREFIX,
   TICKET_CREATE_PREFIX,
   APP_START_PREFIX,
+  MAFIA_START_PREFIX,
 } = require('../interactions/constants');
 
 module.exports = {
@@ -150,6 +152,18 @@ module.exports = {
             .setName('ranga-po-akceptacji')
             .setDescription('Opcjonalna rola nadawana automatycznie po przyjęciu podania')
             .setRequired(false)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('mafia')
+        .setDescription('Wysyła panel tworzenia Mafii/Gangu')
+        .addChannelOption((option) =>
+          option
+            .setName('kanal')
+            .setDescription('Kanał, na który trafiają zarejestrowane organizacje')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(true)
         )
     ),
 
@@ -293,6 +307,22 @@ module.exports = {
       }
 
       await interaction.reply({ content: `✅ Panel rekrutacji wysłany na ${channel}.`, ephemeral: true });
+      return;
+    }
+
+    if (subcommand === 'mafia') {
+      const channel = interaction.options.getChannel('kanal');
+
+      const embed = buildMafiaPanelEmbed(channel);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${MAFIA_START_PREFIX}:${channel.id}`)
+          .setLabel('Stwórz Organizację')
+          .setEmoji('🔫')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      await interaction.reply({ embeds: [embed], components: [row] });
     }
   },
 };
