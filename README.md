@@ -110,9 +110,10 @@ W odróżnieniu od `/panel` (który tylko **publikuje** panele dla graczy), `/po
   punktami karnymi), **aktualne punkty karne (x/24)**, status na liście gończej, a jeśli sam jest
   funkcjonariuszem — jego rangę i przynależność do CBŚP.
 - **`/policja mandat gracz:@osoba kwota:<zł> punkty:<1-15> powod:<opis>`** *(rola `@Policja`)* — wystawia
-  mandat z **punktami karnymi jak w prawdziwym systemie**: punkty się sumują i **wygasają rok po
-  wystawieniu mandatu**, a po przekroczeniu **24 aktywnych punktów prawo jazdy jest automatycznie
-  zawieszane**. Cały mandat trafia do rejestru karnego gracza i jest widoczny w `sprawdz-gracza`.
+  mandat z **punktami karnymi jak w prawdziwym systemie**: punkty się sumują i **wygasają tydzień po
+  wystawieniu mandatu** (skrócone z realnego roku na potrzeby tempa RP), a po przekroczeniu **24 aktywnych
+  punktów prawo jazdy jest automatycznie zawieszane**. Cały mandat trafia do rejestru karnego gracza i jest
+  widoczny w `sprawdz-gracza`.
 - **`/policja goniony gracz:@osoba akcja:<Dodaj/Usuń> [powod]`** *(rola `@Policja`)* — ogłasza lub zdejmuje
   list gończy (np. po zatrzymaniu); status widoczny w `sprawdz-gracza`.
 - **`/policja zawieszenie gracz:@osoba akcja:<Zawieś/Przywróć> [powod]`** *(rola `@Policja`)* — blokuje albo

@@ -171,11 +171,6 @@ async function changeRank(interaction, config, direction) {
     newRankLabel: newRank.label,
   });
   await interaction.reply({ embeds: [embed] });
-
-  await sendAdminLog(interaction.client, {
-    title: direction > 0 ? '⬆️ Awans funkcjonariusza' : '⬇️ Degradacja funkcjonariusza',
-    description: `**Kto:** ${target} (${target.tag})\n**Nowa ranga:** ${newRank.label}\n**Zatwierdził:** <@${interaction.user.id}>`,
-  });
 }
 
 module.exports = {
@@ -243,15 +238,6 @@ module.exports = {
 
       const embed = buildMandatEmbed({ officer: interaction.user, target, amount, points, reason, activePoints, autoSuspended });
       await interaction.reply({ embeds: [embed] });
-
-      await sendAdminLog(interaction.client, {
-        title: '📋 Wystawiono mandat',
-        description:
-          `**Kto:** ${target} (${target.tag})\n**Kwota:** ${amount} zł\n**Punkty:** ${points} (aktywne: ${activePoints}/${registry.MAX_POINTS_BEFORE_SUSPENSION})\n` +
-          `**Powód:** ${reason}\n**Funkcjonariusz:** <@${interaction.user.id}>` +
-          (autoSuspended ? '\n🚫 **Automatycznie zawieszono prawo jazdy (przekroczono limit punktów).**' : ''),
-        color: autoSuspended ? '#e02b2b' : undefined,
-      });
       return;
     }
 
@@ -278,11 +264,6 @@ module.exports = {
 
       const embed = buildGonionyEmbed({ officer: interaction.user, target, action, reason });
       await interaction.reply({ embeds: [embed] });
-
-      await sendAdminLog(interaction.client, {
-        title: action === 'dodaj' ? '🚨 Ogłoszono list gończy' : '✅ Zdjęto z listy gończej',
-        description: `**Kto:** ${target} (${target.tag})\n**Funkcjonariusz:** <@${interaction.user.id}>${reason ? `\n**Powód:** ${reason}` : ''}`,
-      });
       return;
     }
 
@@ -307,11 +288,6 @@ module.exports = {
 
       const embed = buildZawieszenieEmbed({ officer: interaction.user, target, action, reason });
       await interaction.reply({ embeds: [embed] });
-
-      await sendAdminLog(interaction.client, {
-        title: suspend ? '🚫 Zawieszono prawo jazdy' : '✅ Przywrócono prawo jazdy',
-        description: `**Kto:** ${target} (${target.tag})\n**Funkcjonariusz:** <@${interaction.user.id}>${reason ? `\n**Powód:** ${reason}` : ''}`,
-      });
       return;
     }
 
@@ -381,11 +357,6 @@ module.exports = {
 
       const embed = buildCbspEmbed({ officer: interaction.user, target, action });
       await interaction.reply({ embeds: [embed] });
-
-      await sendAdminLog(interaction.client, {
-        title: add ? '🕵️ Przydzielono do CBŚP' : '🕵️ Usunięto z CBŚP',
-        description: `**Kto:** ${target} (${target.tag})\n**Zatwierdził:** <@${interaction.user.id}>`,
-      });
     }
   },
 };

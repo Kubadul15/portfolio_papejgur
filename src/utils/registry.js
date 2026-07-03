@@ -57,9 +57,11 @@ function mutate(fn) {
 }
 
 // Jak w prawdziwym polskim systemie: 24 aktywne punkty karne = automatyczne
-// zawieszenie prawa jazdy, a punkty "kasują się" po roku od wystawienia mandatu.
+// zawieszenie prawa jazdy. Na potrzeby RP punkty "kasują się" po tygodniu od
+// wystawienia mandatu (zamiast realnego roku) - inaczej ciążyłyby na graczu
+// całą sezonową rozgrywkę.
 const MAX_POINTS_BEFORE_SUSPENSION = 24;
-const POINTS_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000;
+const POINTS_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 
 function defaultUser() {
   return {
