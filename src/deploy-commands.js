@@ -8,16 +8,24 @@ const commands = [panelCommand.data.toJSON(), policjaCommand.data.toJSON()];
 const rest = new REST().setToken(config.discordToken);
 
 (async () => {
-  try {
-    console.log(`Rejestrowanie ${commands.length} komend na serwerze ${config.guildId}...`);
+  let hadError = false;
 
-    await rest.put(Routes.applicationGuildCommands(config.clientId, config.guildId), {
-      body: commands,
-    });
+  for (const guildId of config.guildIds) {
+    try {
+      console.log(`Rejestrowanie ${commands.length} komend na serwerze ${guildId}...`);
 
-    console.log('Komendy zarejestrowane pomyślnie.');
-  } catch (error) {
-    console.error('Błąd podczas rejestracji komend:', error);
+      await rest.put(Routes.applicationGuildCommands(config.clientId, guildId), {
+        body: commands,
+      });
+
+      console.log(`Komendy zarejestrowane pomyślnie na serwerze ${guildId}.`);
+    } catch (error) {
+      hadError = true;
+      console.error(`Błąd podczas rejestracji komend na serwerze ${guildId}:`, error);
+    }
+  }
+
+  if (hadError) {
     process.exitCode = 1;
   }
 })();

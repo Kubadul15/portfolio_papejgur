@@ -16,10 +16,20 @@ function requireEnv(name) {
 // na sciezke montowania (np. /data/registry.json) - patrz README.
 const rawRegistryPath = process.env.REGISTRY_PATH || 'data/registry.json';
 
+// GUILD_ID moze byc jednym ID albo lista ID rozdzielona przecinkami, jesli
+// bot ma dzialac (i miec zarejestrowane slash commands) na wiecej niz jednym
+// serwerze - patrz deploy-commands.js, ktore rejestruje komendy na kazdym
+// z nich osobno.
+const guildIds = requireEnv('GUILD_ID')
+  .split(',')
+  .map((id) => id.trim())
+  .filter(Boolean);
+
 module.exports = {
   discordToken: requireEnv('DISCORD_TOKEN'),
   clientId: requireEnv('CLIENT_ID'),
-  guildId: requireEnv('GUILD_ID'),
+  guildId: guildIds[0],
+  guildIds,
   targetChannelId: requireEnv('TARGET_CHANNEL_ID'),
   idPrefix: process.env.ID_PREFIX || 'EH',
   serverName: process.env.SERVER_NAME || 'Emergency Hamburg ROLEPLAY | Gdansk RP',

@@ -99,12 +99,13 @@ W odróżnieniu od `/panel` (który tylko **publikuje** panele dla graczy), `/po
 **akcji** wykonywanych przez funkcjonariuszy — dlatego żyje jako osobna komenda z własnymi podkomendami
 (nadal jedna komenda, `nie osobne komendy` na każdą funkcję):
 
-**Ograniczenie do jednego serwera:** bota można zaprosić na więcej niż jeden serwer Discord, ale cały
-`/policja` (wszystkie podkomendy, łącznie z `rekrutacja`) **działa wyłącznie na jednym, skonfigurowanym
-serwerze** — na każdym innym serwerze bot grzecznie odmówi wykonania komendy. Serwer ustawia się zmienną
-`POLICE_GUILD_ID` (domyślnie już ustawiona na główny serwer Gdańsk RP). Uwaga: to nie wpływa na `/panel`,
-który nadal działa tam, gdzie zarejestrowano komendy (`GUILD_ID`) — jeśli bota dodasz na drugi serwer i
-chcesz tam też mieć `/panel`, trzeba osobno zarejestrować komendy dla tamtego serwera.
+**Ograniczenie do jednego serwera:** bota można zaprosić na więcej niż jeden serwer Discord (`GUILD_ID`
+przyjmuje listę ID rozdzieloną przecinkami — patrz sekcja "Wdrożenie na Railway" niżej, komendy rejestrują
+się osobno na każdym z nich), ale cały `/policja` (wszystkie podkomendy, łącznie z `rekrutacja`) **działa
+wyłącznie na jednym, skonfigurowanym serwerze** — na każdym innym serwerze bot grzecznie odmówi wykonania
+komendy. Ten jeden serwer ustawia się osobną zmienną `POLICE_GUILD_ID` (domyślnie już ustawiona na główny
+serwer Gdańsk RP). `/panel` nie ma tego ograniczenia — działa normalnie na każdym serwerze wymienionym w
+`GUILD_ID`.
 
 - **`/policja rekrutacja kanal:#kanał kategoria:<kategoria> rola-obslugi:@rola [ranga-po-akceptacji:@rola]`**
   — osobny panel rekrutacji, tematycznie oznaczony jako nabór do **Komendy Miejskiej Policji (KMP)**.
@@ -208,10 +209,12 @@ tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
 5. W zakładce **OAuth2 → URL Generator** zaznacz scope `bot` oraz `applications.commands`,
    z uprawnień zaznacz co najmniej: *Send Messages*, *Embed Links*, *Use Slash Commands*, *Manage Roles*
    (nadawanie ról), *Manage Channels* (tworzenie/usuwanie kanałów ticketów).
-   Wygenerowanym linkiem zaproś bota na serwer Gdańsk RP.
+   Wygenerowanym linkiem zaproś bota na serwer Gdańsk RP — **i na każdy kolejny serwer, na którym ma
+   działać** (tym samym linkiem, tylko wybierz inny serwer w oknie zaproszenia).
 6. Włącz Developer Mode w Discordzie (Ustawienia → Zaawansowane), kliknij PPM na serwer →
-   **Kopiuj ID serwera** (to `GUILD_ID`), oraz PPM na kanał docelowy dowodów → **Kopiuj ID kanału**
-   (to `TARGET_CHANNEL_ID`).
+   **Kopiuj ID serwera** (to `GUILD_ID` — jeśli bot ma działać na kilku serwerach, zbierz ID każdego z nich
+   i połącz przecinkami, np. `GUILD_ID=1111111111,2222222222`), oraz PPM na kanał docelowy dowodów →
+   **Kopiuj ID kanału** (to `TARGET_CHANNEL_ID`).
 
 ## 2. Wdrożenie na Railway (hosting 24/7)
 
@@ -224,7 +227,7 @@ tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
    |---|---|
    | `DISCORD_TOKEN` | token bota |
    | `CLIENT_ID` | Application ID |
-   | `GUILD_ID` | ID serwera Gdańsk RP |
+   | `GUILD_ID` | ID serwera Gdańsk RP (lub kilka ID po przecinku, jeśli bot ma działać na kilku serwerach) |
    | `TARGET_CHANNEL_ID` | ID kanału, na który trafiają zatwierdzone dowody |
    | `ID_PREFIX` | np. `EH` — prefiks numeru dowodu |
    | `SERVER_NAME` | np. `Emergency Hamburg ROLEPLAY \| Gdańsk RP` |
