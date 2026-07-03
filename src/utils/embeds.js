@@ -253,13 +253,14 @@ function buildTicketEmbed({ owner, reason, claimerId }) {
     .setTimestamp();
 }
 
-function buildApplicationPanelEmbed(supportRole) {
+function buildApplicationPanelEmbed(supportRole, { title, extraLine } = {}) {
   return new EmbedBuilder()
     .setColor(config.embedColor)
-    .setTitle('📝 Panel — Rekrutacja')
+    .setTitle(title || '📝 Panel — Rekrutacja')
     .setDescription(
       'Kliknij przycisk poniżej, aby złożyć podanie do naszej społeczności.\n\n' +
-        `Twoje podanie zobaczy tylko rola ${supportRole} — odpowiedz szczerze, to nie zajmie długo!`
+        `Twoje podanie zobaczy tylko rola ${supportRole} — odpowiedz szczerze, to nie zajmie długo!` +
+        (extraLine ? `\n\n${extraLine}` : '')
     )
     .setFooter({ text: config.serverName });
 }

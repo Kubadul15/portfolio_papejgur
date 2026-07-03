@@ -99,6 +99,18 @@ W odróżnieniu od `/panel` (który tylko **publikuje** panele dla graczy), `/po
 **akcji** wykonywanych przez funkcjonariuszy — dlatego żyje jako osobna komenda z własnymi podkomendami
 (nadal jedna komenda, `nie osobne komendy` na każdą funkcję):
 
+**Ograniczenie do jednego serwera:** bota można zaprosić na więcej niż jeden serwer Discord, ale cały
+`/policja` (wszystkie podkomendy, łącznie z `rekrutacja`) **działa wyłącznie na jednym, skonfigurowanym
+serwerze** — na każdym innym serwerze bot grzecznie odmówi wykonania komendy. Serwer ustawia się zmienną
+`POLICE_GUILD_ID` (domyślnie już ustawiona na główny serwer Gdańsk RP). Uwaga: to nie wpływa na `/panel`,
+który nadal działa tam, gdzie zarejestrowano komendy (`GUILD_ID`) — jeśli bota dodasz na drugi serwer i
+chcesz tam też mieć `/panel`, trzeba osobno zarejestrować komendy dla tamtego serwera.
+
+- **`/policja rekrutacja kanal:#kanał kategoria:<kategoria> rola-obslugi:@rola [ranga-po-akceptacji:@rola]`**
+  — osobny panel rekrutacji, tematycznie oznaczony jako nabór do **Komendy Miejskiej Policji (KMP)**.
+  Działa dokładnie jak `/panel rekrutacja` (ten sam formularz, przyciski przyjęcia/odrzucenia przez select
+  menu, kanały-podania w temacie) — to po prostu druga, osobno oznaczona instancja tego samego mechanizmu,
+  żeby rekrutacja cywilna i policyjna nie mieszały się na jednym panelu.
 - **`/policja setup`** *(wymaga uprawnienia Zarządzanie serwerem, jednorazowo)* — konfiguruje rolę dostępu
   `@Policja` oraz całą **drabinkę awansów**: Kadet → Posterunkowy → Sierżant → Aspirant → Komisarz →
   Nadkomisarz → Komendant (7 ról, po jednej na rangę) plus opcjonalną rolę specjalnej jednostki **CBŚP**
@@ -219,6 +231,7 @@ tym, kto i kiedy to zrobił. Bez tej zmiennej logowanie jest po prostu pomijane.
    | `EMBED_COLOR` | np. `#8b5cf6` |
    | `ADMIN_LOG_CHANNEL_ID` | opcjonalnie — ID kanału logów administracyjnych |
    | `REGISTRY_PATH` | opcjonalnie — ścieżka trwałego rejestru; ustaw dopiero po podpięciu Volume (patrz sekcja "System Policyjny" niżej) |
+   | `POLICE_GUILD_ID` | opcjonalnie — ID serwera, na którym ma działać `/policja`; domyślnie już ustawione na główny serwer |
 
 5. Po zapisaniu zmiennych Railway zbuduje i uruchomi bota. `npm start` najpierw rejestruje/aktualizuje
    komendy slash (`node src/deploy-commands.js`), a potem startuje bota (`node src/index.js`) —
