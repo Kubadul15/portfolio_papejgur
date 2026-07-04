@@ -89,13 +89,10 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera oraz systemu policyjnego 
 - **`/panel mafia kanal:#kanał`** — publikuje embed z przyciskiem **"🔫 Stwórz Organizację"** w bieżącym
   kanale. Klik → select menu "Ile osób jest w organizacji?" (opcje 3–10 oraz "10+", więc minimum 3 osoby
   jest wymuszone samą listą wyboru, bez możliwości ominięcia), potem modal: Właściciel Mafii/Gangu,
-  Współwłaściciel Mafii/Gangu, Nazwa Mafii/Gangu, Kolor Aut. Discord nie pozwala dodać pola typu "plik" do
-  formularza, więc na zdjęcie bazy bot pisze do gracza na **wiadomościach prywatnych** i czeka do 2 minut na
-  wysłany załącznik — czyli realny upload zdjęcia z dysku, tylko przez PW zamiast pola w formularzu. Bot
-  pokazuje prywatny podgląd karty organizacji (z automatycznie wygenerowanym numerem, np. `MG-4821` i
-  wgranym zdjęciem mapy) z przyciskami **Wyślij** / **Anuluj**. Po kliknięciu "Wyślij" karta trafia na
-  skonfigurowany kanał `kanal`. Wymaga, żeby gracz miał włączone wiadomości prywatne od członków serwera —
-  bot informuje o tym, jeśli nie może wysłać DM.
+  Współwłaściciel Mafii/Gangu, Nazwa Mafii/Gangu, Kolor Aut, **Miejscówka (gdzie jest baza)**. Bot pokazuje
+  prywatny podgląd karty organizacji (z automatycznie wygenerowanym numerem, np. `MG-4821`) z przyciskami
+  **Wyślij** / **Anuluj**. Po kliknięciu "Wyślij" karta trafia na skonfigurowany kanał `kanal`, a jeśli
+  ustawiony jest system policyjny, miejscówka pojawia się też w `/policja sprawdz-gracza`.
 
 ## System Policyjny (`/policja`)
 

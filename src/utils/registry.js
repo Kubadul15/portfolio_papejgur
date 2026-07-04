@@ -173,10 +173,10 @@ function recordVehicle(discordId, discordTag, { make, year, color, engine, categ
   });
 }
 
-function recordMafiaOrg(discordId, discordTag, { name, owner, coOwner, color, size, orgNumber, baseImageUrl }) {
+function recordMafiaOrg(discordId, discordTag, { name, owner, coOwner, color, size, orgNumber, location }) {
   mutate((data) => {
     const user = ensureUser(data, discordId, discordTag);
-    user.organizations.push({ name, owner, coOwner, color, size, orgNumber, baseImageUrl, registeredAt: Date.now() });
+    user.organizations.push({ name, owner, coOwner, color, size, orgNumber, location, registeredAt: Date.now() });
   });
 }
 

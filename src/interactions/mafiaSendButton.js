@@ -18,7 +18,7 @@ async function handleMafiaSendButton(interaction) {
       color: getEmbedFieldValue(embed, 'Kolor Aut'),
       size: getEmbedFieldValue(embed, 'Liczba członków'),
       orgNumber: getEmbedFieldValue(embed, 'Numer organizacji'),
-      baseImageUrl: embed.image ? embed.image.url : null,
+      location: getEmbedFieldValue(embed, 'Miejscówka'),
     });
 
     await interaction.update({

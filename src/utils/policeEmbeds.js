@@ -62,7 +62,9 @@ function buildSprawdzGraczaEmbed({ nick, discordId, record, activePoints }) {
   }
 
   if (record.organizations && record.organizations.length > 0) {
-    const orgsText = record.organizations.map((o) => `• **${o.name}** — \`${o.orgNumber}\``).join('\n');
+    const orgsText = record.organizations
+      .map((o) => `• **${o.name}** — \`${o.orgNumber}\`${o.location ? ` (📍 ${o.location})` : ''}`)
+      .join('\n');
     embed.addFields({ name: `🔫 Organizacje (${record.organizations.length})`, value: orgsText, inline: false });
   }
 

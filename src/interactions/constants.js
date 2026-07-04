@@ -89,6 +89,7 @@ module.exports = {
   MODAL_FIELD_MAFIA_COOWNER: 'mafia_coowner',
   MODAL_FIELD_MAFIA_NAME: 'mafia_name',
   MODAL_FIELD_MAFIA_COLOR: 'mafia_color',
+  MODAL_FIELD_MAFIA_LOCATION: 'mafia_location',
 
   // Egzamin wiedzy dla rekrutacji do KMP (/policja rekrutacja). Kategoria i
   // role docelowe podania sa zapisane w rejestrze pod krotkim panelId (patrz

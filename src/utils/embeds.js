@@ -319,14 +319,14 @@ function buildMafiaPanelEmbed(targetChannel) {
     .setTitle('🔫 Panel — Stwórz Mafię/Gang')
     .setDescription(
       'Kliknij przycisk poniżej, aby zarejestrować swoją organizację.\n\n' +
-        'Podasz właściciela i współwłaściciela, nazwę, ilość osób (min. 3) i kolor aut, a na koniec ' +
-        'wyślesz mi na PW zdjęcie mapy bazy.\n\n' +
+        'Podasz właściciela i współwłaściciela, nazwę, ilość osób (min. 3), kolor aut i miejscówkę ' +
+        '(gdzie jest baza).\n\n' +
         `Po utworzeniu karta organizacji trafi na kanał ${targetChannel}.`
     )
     .setFooter({ text: config.serverName });
 }
 
-function buildMafiaCardEmbed({ discordUser, owner, coOwner, name, color, size, baseImageUrl, orgNumber }) {
+function buildMafiaCardEmbed({ discordUser, owner, coOwner, name, color, size, location, orgNumber }) {
   const embed = new EmbedBuilder()
     .setColor(config.embedColor)
     .setTitle('🔫 Rejestracja Mafii/Gangu')
@@ -337,9 +337,9 @@ function buildMafiaCardEmbed({ discordUser, owner, coOwner, name, color, size, b
       { name: '🤝 Współwłaściciel', value: coOwner, inline: true },
       { name: '🎨 Kolor Aut', value: color, inline: true },
       { name: '👥 Liczba członków', value: size, inline: true },
-      { name: '🆔 Numer organizacji', value: orgNumber, inline: true }
+      { name: '🆔 Numer organizacji', value: orgNumber, inline: true },
+      { name: '📍 Miejscówka', value: location, inline: false }
     )
-    .setImage(baseImageUrl)
     .setFooter({ text: config.serverName })
     .setTimestamp();
 
