@@ -10,12 +10,12 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera oraz systemu policyjnego 
   skonfigurowany kanał docelowy. Jeśli podasz opcjonalny parametr `ranga` (np. "Obywatel"), bot
   **automatycznie nada tę rolę** po wysłaniu dowodu — można ją potem wymagać w innych panelach (patrz niżej).
 
-- **`/panel weryfikacja kanal:#kanał ranga:@rola`** — publikuje na wskazanym kanale embed z przyciskiem
-  **"Zweryfikuj się"**. Po kliknięciu gracz podaje w formularzu swój nick Roblox — bot pokazuje mu (tylko
-  jemu) prawdziwy avatar/nazwę konta oraz losowy 6-znakowy kod, który trzeba wkleić do opisu (bio) profilu
-  Roblox. Po zapisaniu zmian gracz klika **"Sprawdź kod"** — jeśli kod faktycznie znajduje się w opisie,
-  bot automatycznie nadaje mu skonfigurowaną rolę. Rola i dane weryfikacji są zakodowane w przyciskach, więc
-  nic nie trzeba zapisywać w bazie danych — działa też po restarcie bota.
+- **`/panel weryfikacja ranga:@rola`** — publikuje embed z przyciskiem **"Zweryfikuj się"**, który korzysta
+  z dokładnie tego samego mechanizmu co `stworz-dowod`: gracz wypełnia formularz (imię i nazwisko RP, wiek
+  RP, obywatelstwo RP, nick Roblox), bot weryfikuje nick w publicznym API Roblox i pokazuje prywatny podgląd
+  dowodu z przyciskami **Wyślij** / **Anuluj**. Po kliknięciu "Wyślij" dowód trafia na ten sam kanał docelowy
+  co wszystkie inne dowody, a gracz **automatycznie otrzymuje podaną rolę** (np. "Zweryfikowany"). Nie ma tu
+  już starego mechanizmu z kodem wklejanym do opisu profilu Roblox — rola wymaga tylko poprawnego dowodu.
 
 - **`/panel prawojazdy kanal:#kanał [ranga:@rola] [wymagana-ranga:@rola]`** — publikuje embed z przyciskiem
   **"Podejdź do egzaminu"**. Jeśli podasz `wymagana-ranga` (np. rolę "Obywatel" nadawaną przez

@@ -64,42 +64,17 @@ function buildIdCardEmbed({
 function buildVerificationPanelEmbed(role) {
   return new EmbedBuilder()
     .setColor(config.embedColor)
-    .setTitle('🔐 Panel — Weryfikacja Roblox')
+    .setTitle('🔐 Panel — Weryfikacja')
     .setDescription(
-      'Kliknij przycisk poniżej, aby zweryfikować swoje konto Roblox.\n\n' +
-        `Po pozytywnej weryfikacji otrzymasz rolę ${role}.`
+      'Kliknij przycisk poniżej, aby się zweryfikować.\n\n' +
+        'Będziesz musiał podać:\n' +
+        '• Imię i nazwisko RP\n' +
+        '• Wiek RP\n' +
+        '• Obywatelstwo RP\n' +
+        '• Nick Roblox (zostanie automatycznie zweryfikowany)\n\n' +
+        `Po weryfikacji otrzymasz swój Dowód Osobisty RP oraz rolę ${role}.`
     )
     .setFooter({ text: config.serverName });
-}
-
-function buildVerificationCodeEmbed({ discordUser, robloxData, code }) {
-  const embed = new EmbedBuilder()
-    .setColor(config.embedColor)
-    .setTitle('Weryfikacja konta Roblox')
-    .setAuthor({ name: discordUser.tag, iconURL: discordUser.displayAvatarURL() })
-    .addFields(
-      {
-        name: '🎲 Konto Roblox',
-        value: `[@${robloxData.name}](https://www.roblox.com/users/${robloxData.id}/profile)`,
-        inline: false,
-      },
-      { name: '🔑 Twój kod', value: `\`${code}\``, inline: false },
-      {
-        name: '📋 Co zrobić',
-        value:
-          '1. Wejdź w edycję profilu na Roblox i wklej powyższy kod do pola **Opis (About)**.\n' +
-          '2. Zapisz zmiany na Roblox.\n' +
-          '3. Wróć tutaj i kliknij **Sprawdź kod**.',
-        inline: false,
-      }
-    )
-    .setFooter({ text: 'Kod możesz usunąć z opisu po zakończonej weryfikacji.' });
-
-  if (robloxData.avatarUrl) {
-    embed.setThumbnail(robloxData.avatarUrl);
-  }
-
-  return embed;
 }
 
 function buildExamPanelEmbed(targetChannel, awardRole, requiredRole) {
@@ -350,7 +325,6 @@ module.exports = {
   buildPanelEmbed,
   buildIdCardEmbed,
   buildVerificationPanelEmbed,
-  buildVerificationCodeEmbed,
   buildExamPanelEmbed,
   buildExamCandidateEmbed,
   buildExamQuestionEmbed,
