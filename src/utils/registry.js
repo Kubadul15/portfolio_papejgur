@@ -23,6 +23,7 @@ function defaultRegistry() {
     users: {},
     policeRecruitmentPanels: {},
     pendingVehicles: {},
+    roleplaySession: null,
   };
 }
 
@@ -36,6 +37,7 @@ function load() {
       users: parsed.users || {},
       policeRecruitmentPanels: parsed.policeRecruitmentPanels || {},
       pendingVehicles: parsed.pendingVehicles || {},
+      roleplaySession: parsed.roleplaySession || null,
     };
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -354,6 +356,40 @@ function deletePendingVehicle(pendingId) {
   });
 }
 
+// Jedna, globalna sesja RP na caly serwer (nie per-uzytkownik jak sluzba
+// policyjna) - /roleplay start/stop. Kod sesji to krotki losowy identyfikator,
+// zeby graczom bylo latwo sie do niej odwolac (np. w innych kanalach/logach).
+function generateSessionCode() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+function startRoleplaySession(discordId, discordTag) {
+  return mutate((data) => {
+    if (data.roleplaySession) {
+      return { alreadyActive: true, session: data.roleplaySession };
+    }
+    const session = { code: generateSessionCode(), startedBy: discordId, startedByTag: discordTag, startedAt: Date.now() };
+    data.roleplaySession = session;
+    return { alreadyActive: false, session };
+  });
+}
+
+function stopRoleplaySession(discordId, discordTag) {
+  return mutate((data) => {
+    if (!data.roleplaySession) {
+      return { notActive: true };
+    }
+    const session = data.roleplaySession;
+    const durationMs = Date.now() - session.startedAt;
+    data.roleplaySession = null;
+    return { notActive: false, session, durationMs, stoppedBy: discordId, stoppedByTag: discordTag };
+  });
+}
+
+function getRoleplaySession() {
+  return load().roleplaySession;
+}
+
 module.exports = {
   linkRoblox,
   findDiscordIdByRobloxNick,
@@ -362,6 +398,9 @@ module.exports = {
   savePendingVehicle,
   getPendingVehicle,
   deletePendingVehicle,
+  startRoleplaySession,
+  stopRoleplaySession,
+  getRoleplaySession,
   recordIdCard,
   recordLicenseCategory,
   recordVehicle,

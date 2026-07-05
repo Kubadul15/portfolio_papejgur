@@ -3,8 +3,14 @@ const config = require('./config');
 const panelCommand = require('./commands/panel');
 const policjaCommand = require('./commands/policja');
 const robloxbanCommand = require('./commands/robloxban');
+const roleplayCommand = require('./commands/roleplay');
 
-const commands = [panelCommand.data.toJSON(), policjaCommand.data.toJSON(), robloxbanCommand.data.toJSON()];
+const commands = [
+  panelCommand.data.toJSON(),
+  policjaCommand.data.toJSON(),
+  robloxbanCommand.data.toJSON(),
+  roleplayCommand.data.toJSON(),
+];
 
 const rest = new REST().setToken(config.discordToken);
 

@@ -227,6 +227,17 @@ na którym bot był, zanim doszedł drugi, policyjny serwer. Serwer ten ustawia 
 odmówi działania — dokładnie tak samo jak `/policja` odmawia działania poza swoim serwerem, tylko
 odwrotnie.
 
+## Sesje RP (`/roleplay`)
+
+- **`/roleplay start`** — rozpoczyna nową sesję RP na serwerze: generuje losowy, krótki **kod sesji** (np.
+  `4anxw6y1`) i publikuje embed pokazujący ten kod oraz kto sesję rozpoczął (osoba, która użyła komendy).
+  Jeśli sesja już trwa, komenda odmawia i przypomina istniejący kod oraz kto ją rozpoczął.
+- **`/roleplay stop`** — kończy aktualnie trwającą sesję: pokazuje kod sesji, kto ją rozpoczął, kto ją
+  zakończył (może to być inna osoba niż ta, która startowała) oraz jak długo trwała.
+
+Sesja jest jedna, globalna dla całego serwera (nie per-gracz) i przetrwa restart bota — stan trzymany jest
+w tym samym trwałym rejestrze co reszta danych (patrz sekcja "Trwały rejestr danych" wyżej).
+
 ## Wymagania
 
 - Node.js 20+
