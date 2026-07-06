@@ -34,6 +34,10 @@ const robloxBanChannelId = process.env.ROBLOX_BAN_CHANNEL_ID || '152258924526764
 // mozna go nadpisac zmienna ROLEPLAY_SESSION_CODE.
 const roleplaySessionCode = process.env.ROLEPLAY_SESSION_CODE || 'pt9iqi8i';
 
+// Kanal, na ktory trafiaja zatwierdzone dowody (klik "Wyslij") - mozna
+// nadpisac zmienna TARGET_CHANNEL_ID.
+const targetChannelId = process.env.TARGET_CHANNEL_ID || '1523744374360506418';
+
 // GUILD_ID moze byc jednym ID albo lista ID rozdzielona przecinkami, jesli
 // bot ma dzialac (i miec zarejestrowane slash commands) na wiecej niz jednym
 // serwerze - patrz deploy-commands.js, ktore rejestruje komendy na kazdym
@@ -55,7 +59,7 @@ module.exports = {
   clientId: requireEnv('CLIENT_ID'),
   guildId: guildIds[0],
   guildIds,
-  targetChannelId: requireEnv('TARGET_CHANNEL_ID'),
+  targetChannelId,
   idPrefix: process.env.ID_PREFIX || 'EH',
   serverName: process.env.SERVER_NAME || 'Emergency Hamburg ROLEPLAY | Gdansk RP',
   embedColor: process.env.EMBED_COLOR || '#8b5cf6',
