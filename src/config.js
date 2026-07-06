@@ -38,6 +38,11 @@ const roleplaySessionCode = process.env.ROLEPLAY_SESSION_CODE || 'pt9iqi8i';
 // nadpisac zmienna TARGET_CHANNEL_ID.
 const targetChannelId = process.env.TARGET_CHANNEL_ID || '1523744374360506418';
 
+// Rola uprawniona do rozpoczynania aukcji domow (/panel aukcja-domow) -
+// mozna nadpisac zmienna HOUSE_AUCTION_ADMIN_ROLE_ID. Kazdy moze licytowac,
+// ale tylko ta rola (lub sam prowadzacy aukcje) moze ja rozpoczac/zakonczyc.
+const houseAuctionAdminRoleId = process.env.HOUSE_AUCTION_ADMIN_ROLE_ID || '1523744175822995617';
+
 // GUILD_ID moze byc jednym ID albo lista ID rozdzielona przecinkami, jesli
 // bot ma dzialac (i miec zarejestrowane slash commands) na wiecej niz jednym
 // serwerze - patrz deploy-commands.js, ktore rejestruje komendy na kazdym
@@ -70,4 +75,5 @@ module.exports = {
   legacyGuildId,
   robloxBanChannelId,
   roleplaySessionCode,
+  houseAuctionAdminRoleId,
 };

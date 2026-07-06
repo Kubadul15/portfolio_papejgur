@@ -320,6 +320,103 @@ function buildMafiaCardEmbed({ discordUser, owner, coOwner, name, color, size, l
   return embed;
 }
 
+function buildHousePanelEmbed(targetChannel) {
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('🏠 Panel — Załóż Dom RP')
+    .setDescription(
+      'Kliknij przycisk poniżej, aby zarejestrować swój dom lub mieszkanie.\n\n' +
+        'Najpierw wybierzesz typ nieruchomości, potem podasz właściciela, lokalizację, adres, cenę i ' +
+        'liczbę pokoi, a na końcu dodatkowe szczegóły (powierzchnię, rok budowy, garaż, basen, opis).\n\n' +
+        `Po rejestracji Akt Własności Domu RP trafi na kanał ${targetChannel}.`
+    )
+    .setFooter({ text: config.serverName });
+}
+
+function buildHouseCardEmbed({
+  discordUser,
+  category,
+  owner,
+  location,
+  address,
+  price,
+  rooms,
+  area,
+  yearBuilt,
+  garage,
+  pool,
+  description,
+  houseNumber,
+}) {
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('🏠 Akt Własności Domu RP')
+    .setAuthor({ name: discordUser.tag, iconURL: discordUser.displayAvatarURL() })
+    .addFields(
+      { name: '🏠 Typ nieruchomości', value: category, inline: true },
+      { name: '👤 Właściciel', value: owner, inline: true },
+      { name: '📍 Lokalizacja', value: location, inline: true },
+      { name: '🏘️ Adres', value: address, inline: false },
+      { name: '💰 Cena', value: `${Number(price).toLocaleString('pl-PL')} zł`, inline: true },
+      { name: '🚪 Liczba pokoi', value: String(rooms), inline: true },
+      { name: '📐 Powierzchnia', value: `${area} m²`, inline: true },
+      { name: '🏗️ Rok budowy', value: String(yearBuilt), inline: true },
+      { name: '🚗 Garaż', value: garage ? 'Tak' : 'Nie', inline: true },
+      { name: '🏊 Basen', value: pool ? 'Tak' : 'Nie', inline: true },
+      { name: '📝 Opis', value: description, inline: false },
+      { name: '🆔 Numer aktu', value: houseNumber, inline: false }
+    )
+    .setFooter({ text: config.serverName })
+    .setTimestamp();
+}
+
+function formatMoney(amount) {
+  return `${Number(amount).toLocaleString('pl-PL')} zł`;
+}
+
+function buildAuctionPanelEmbed(targetChannel, adminRoleMention) {
+  return new EmbedBuilder()
+    .setColor(config.embedColor)
+    .setTitle('🏛️ Panel — Aukcje Domów RP')
+    .setDescription(
+      `Tylko rola ${adminRoleMention} może rozpocząć aukcję domu przyciskiem poniżej — poda nazwę domu, ` +
+        'lokalizację, cenę wywoławczą, minimalną podbitkę i opis.\n\n' +
+        `Gdy aukcja ruszy na kanale ${targetChannel}, każdy może licytować przyciskiem **Licytuj** — ` +
+        'najwyższa oferta wygrywa po zamknięciu aukcji przez prowadzącego (przycisk **Zakończ aukcję**).'
+    )
+    .setFooter({ text: config.serverName });
+}
+
+function buildAuctionEmbed(auction, auctionId) {
+  const bidLine =
+    auction.highestBid !== null
+      ? `${formatMoney(auction.highestBid)} — <@${auction.highestBidderId}>`
+      : `Brak ofert — cena wywoławcza ${formatMoney(auction.startingPrice)}`;
+
+  const statusLine =
+    auction.status === 'active'
+      ? '🟢 Aktywna'
+      : auction.highestBid !== null
+        ? `🔴 Zakończona — wygrywa <@${auction.highestBidderId}> za ${formatMoney(auction.highestBid)}`
+        : '🔴 Zakończona — brak ofert';
+
+  return new EmbedBuilder()
+    .setColor(auction.status === 'active' ? config.embedColor : '#e02b2b')
+    .setTitle(`🏛️ Aukcja Domu RP — ${auction.house}`)
+    .addFields(
+      { name: '📍 Lokalizacja', value: auction.location, inline: true },
+      { name: '🧑‍⚖️ Aukcjoner', value: `<@${auction.auctioneerId}>`, inline: true },
+      { name: '📌 Status', value: statusLine, inline: false },
+      { name: '📝 Opis', value: auction.description, inline: false },
+      { name: '💰 Cena wywoławcza', value: formatMoney(auction.startingPrice), inline: true },
+      { name: '📈 Minimalna podbitka', value: formatMoney(auction.minIncrement), inline: true },
+      { name: '🏆 Aktualna oferta', value: bidLine, inline: false },
+      { name: '🆔 Numer aukcji', value: `AUK-${auctionId.toUpperCase()}`, inline: false }
+    )
+    .setFooter({ text: config.serverName })
+    .setTimestamp();
+}
+
 module.exports = {
   buildPanelEmbed,
   buildIdCardEmbed,
@@ -337,4 +434,8 @@ module.exports = {
   buildApplicationEmbed,
   buildMafiaPanelEmbed,
   buildMafiaCardEmbed,
+  buildHousePanelEmbed,
+  buildHouseCardEmbed,
+  buildAuctionPanelEmbed,
+  buildAuctionEmbed,
 };

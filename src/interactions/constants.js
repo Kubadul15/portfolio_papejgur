@@ -97,4 +97,44 @@ module.exports = {
   // APP_START_PREFIX po zdaniu), ale z innym, prostszym pytaniom.
   WRD_EXAM_START_PREFIX: 'wrd_exam_start',
   WRD_EXAM_ANSWER_PREFIX: 'wrd_exam_ans',
+
+  // Panel zaloz-dom. Podobnie jak przy pojezdzie: modal ma juz maksymalne
+  // 5 pol, wiec dodatkowe szczegoly (powierzchnia/rok/garaz/basen/opis)
+  // zbiera drugi modal za posrednictwem przycisku HOUSE_DETAILS_START_PREFIX
+  // (Discord nie pozwala pokazac modala w odpowiedzi na modal). Dane z
+  // pierwszego modala trzymane sa krotko w rejestrze pod losowym pendingId
+  // (registry.savePendingHouse), tak jak w rejestracji pojazdu.
+  HOUSE_START_PREFIX: 'house_start',
+  HOUSE_CATEGORY_PREFIX: 'house_category',
+  HOUSE_MODAL_PREFIX: 'house_modal',
+  HOUSE_DETAILS_START_PREFIX: 'house_details_start',
+  HOUSE_DETAILS_MODAL_PREFIX: 'house_details_modal',
+  HOUSE_SEND_PREFIX: 'house_send',
+  MODAL_FIELD_HOUSE_OWNER: 'house_owner',
+  MODAL_FIELD_HOUSE_LOCATION: 'house_location',
+  MODAL_FIELD_HOUSE_ADDRESS: 'house_address',
+  MODAL_FIELD_HOUSE_PRICE: 'house_price',
+  MODAL_FIELD_HOUSE_ROOMS: 'house_rooms',
+  MODAL_FIELD_HOUSE_AREA: 'house_area',
+  MODAL_FIELD_HOUSE_YEAR: 'house_year',
+  MODAL_FIELD_HOUSE_GARAGE: 'house_garage',
+  MODAL_FIELD_HOUSE_POOL: 'house_pool',
+  MODAL_FIELD_HOUSE_DESC: 'house_desc',
+
+  // Panel aukcji domow (/panel aukcja-domow). Rozpoczac aukcje moze tylko
+  // config.houseAuctionAdminRoleId, ale licytowac (AUCTION_BID_PREFIX) moze
+  // kazdy. Cala zywa aukcja (aktualna najwyzsza oferta, kto licytuje, status)
+  // trzymana jest w rejestrze pod krotkim auctionId - embed ogloszenia jest
+  // za kazdym razem budowany od nowa z tego stanu, wiec przetrwa restart bota.
+  AUCTION_START_PREFIX: 'auction_start',
+  AUCTION_MODAL_PREFIX: 'auction_modal',
+  AUCTION_BID_PREFIX: 'auction_bid',
+  AUCTION_BID_MODAL_PREFIX: 'auction_bid_modal',
+  AUCTION_END_PREFIX: 'auction_end',
+  MODAL_FIELD_AUCTION_HOUSE: 'auction_house',
+  MODAL_FIELD_AUCTION_LOCATION: 'auction_location',
+  MODAL_FIELD_AUCTION_PRICE: 'auction_price',
+  MODAL_FIELD_AUCTION_INCREMENT: 'auction_increment',
+  MODAL_FIELD_AUCTION_DESC: 'auction_desc',
+  MODAL_FIELD_AUCTION_BID: 'auction_bid_amount',
 };

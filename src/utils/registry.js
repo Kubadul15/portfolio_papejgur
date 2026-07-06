@@ -23,6 +23,8 @@ function defaultRegistry() {
     users: {},
     policeRecruitmentPanels: {},
     pendingVehicles: {},
+    pendingHouses: {},
+    houseAuctions: {},
     roleplaySession: null,
   };
 }
@@ -37,6 +39,8 @@ function load() {
       users: parsed.users || {},
       policeRecruitmentPanels: parsed.policeRecruitmentPanels || {},
       pendingVehicles: parsed.pendingVehicles || {},
+      pendingHouses: parsed.pendingHouses || {},
+      houseAuctions: parsed.houseAuctions || {},
       roleplaySession: parsed.roleplaySession || null,
     };
   } catch (error) {
@@ -77,6 +81,7 @@ function defaultUser() {
     license: { categories: [], suspended: false, suspendedReason: null, suspendedAt: null },
     vehicles: [],
     organizations: [],
+    houses: [],
     citations: [],
     wanted: null,
     police: { rank: null, cbsp: false, dutyStart: null, totalDutyMs: 0 },
@@ -179,6 +184,31 @@ function recordMafiaOrg(discordId, discordTag, { name, owner, coOwner, color, si
   mutate((data) => {
     const user = ensureUser(data, discordId, discordTag);
     user.organizations.push({ name, owner, coOwner, color, size, orgNumber, location, registeredAt: Date.now() });
+  });
+}
+
+function recordHouse(
+  discordId,
+  discordTag,
+  { category, owner, location, address, price, rooms, area, yearBuilt, garage, pool, description, houseNumber }
+) {
+  mutate((data) => {
+    const user = ensureUser(data, discordId, discordTag);
+    user.houses.push({
+      category,
+      owner,
+      location,
+      address,
+      price,
+      rooms,
+      area,
+      yearBuilt,
+      garage,
+      pool,
+      description,
+      houseNumber,
+      registeredAt: Date.now(),
+    });
   });
 }
 
@@ -356,6 +386,100 @@ function deletePendingVehicle(pendingId) {
   });
 }
 
+// Modal rejestracji domu (/panel zaloz-dom) ma juz 5 pol (limit Discorda),
+// wiec dodatkowe szczegoly (powierzchnia/rok/garaz/basen/opis) zbiera drugi
+// modal - dane z pierwszego trzymane sa krotko pod losowym pendingId, tak
+// samo jak przy rejestracji pojazdu.
+function savePendingHouse(data) {
+  return mutate((registryData) => {
+    const pendingId = Math.random().toString(36).slice(2, 8);
+    registryData.pendingHouses[pendingId] = data;
+    return pendingId;
+  });
+}
+
+function getPendingHouse(pendingId) {
+  const data = load();
+  return data.pendingHouses[pendingId] || null;
+}
+
+function deletePendingHouse(pendingId) {
+  mutate((data) => {
+    delete data.pendingHouses[pendingId];
+  });
+}
+
+// Aukcje domow (/panel aukcja-domow). W przeciwienstwie do dowodow/pojazdow,
+// stan aukcji (aktualna najwyzsza oferta, kto licytuje, czy jest aktywna)
+// zyje dluzej niz jedna interakcje, wiec trzymany jest caly czas w rejestrze
+// pod krotkim auctionId - embed ogloszenia jest budowany od nowa z tego
+// stanu przy kazdej zmianie (nowa oferta, koniec aukcji).
+function startHouseAuction({ channelId, house, location, description, startingPrice, minIncrement, auctioneerId, auctioneerTag }) {
+  return mutate((data) => {
+    const auctionId = Math.random().toString(36).slice(2, 8);
+    data.houseAuctions[auctionId] = {
+      channelId,
+      messageId: null,
+      house,
+      location,
+      description,
+      startingPrice,
+      minIncrement,
+      auctioneerId,
+      auctioneerTag,
+      highestBid: null,
+      highestBidderId: null,
+      highestBidderTag: null,
+      status: 'active',
+      createdAt: Date.now(),
+      endedAt: null,
+    };
+    return auctionId;
+  });
+}
+
+function setAuctionMessageId(auctionId, messageId) {
+  mutate((data) => {
+    const auction = data.houseAuctions[auctionId];
+    if (auction) auction.messageId = messageId;
+  });
+}
+
+function getHouseAuction(auctionId) {
+  const data = load();
+  return data.houseAuctions[auctionId] || null;
+}
+
+function placeBid(auctionId, { bidderId, bidderTag, amount }) {
+  return mutate((data) => {
+    const auction = data.houseAuctions[auctionId];
+    if (!auction) return { ok: false, reason: 'not_found' };
+    if (auction.status !== 'active') return { ok: false, reason: 'ended' };
+
+    const minRequired = auction.highestBid !== null ? auction.highestBid + auction.minIncrement : auction.startingPrice;
+    if (amount < minRequired) return { ok: false, reason: 'too_low', minRequired };
+
+    auction.highestBid = amount;
+    auction.highestBidderId = bidderId;
+    auction.highestBidderTag = bidderTag;
+    return { ok: true, auction: { ...auction } };
+  });
+}
+
+function endHouseAuction(auctionId, { endedBy, endedByTag }) {
+  return mutate((data) => {
+    const auction = data.houseAuctions[auctionId];
+    if (!auction) return { ok: false, reason: 'not_found' };
+    if (auction.status !== 'active') return { ok: false, reason: 'already_ended' };
+
+    auction.status = 'ended';
+    auction.endedAt = Date.now();
+    auction.endedBy = endedBy;
+    auction.endedByTag = endedByTag;
+    return { ok: true, auction: { ...auction } };
+  });
+}
+
 // Jedna, globalna sesja RP na caly serwer (nie per-uzytkownik jak sluzba
 // policyjna) - /roleplay start/stop. Kod sesji jest stale ustalony
 // (config.roleplaySessionCode), nie losowany za kazdym razem.
@@ -394,6 +518,14 @@ module.exports = {
   savePendingVehicle,
   getPendingVehicle,
   deletePendingVehicle,
+  savePendingHouse,
+  getPendingHouse,
+  deletePendingHouse,
+  startHouseAuction,
+  setAuctionMessageId,
+  getHouseAuction,
+  placeBid,
+  endHouseAuction,
   startRoleplaySession,
   stopRoleplaySession,
   getRoleplaySession,
@@ -401,6 +533,7 @@ module.exports = {
   recordLicenseCategory,
   recordVehicle,
   recordMafiaOrg,
+  recordHouse,
   addCitation,
   getActivePoints,
   MAX_POINTS_BEFORE_SUSPENSION,

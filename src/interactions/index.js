@@ -31,6 +31,17 @@ const { handlePoliceExamStartButton } = require('./policeExamStartButton');
 const { handlePoliceExamAnswerButton } = require('./policeExamAnswerButton');
 const { handleWrdExamStartButton } = require('./wrdExamStartButton');
 const { handleWrdExamAnswerButton } = require('./wrdExamAnswerButton');
+const { handleHouseStartButton } = require('./houseStartButton');
+const { handleHouseCategorySelect } = require('./houseCategorySelect');
+const { handleHouseModal } = require('./houseModal');
+const { handleHouseDetailsStartButton } = require('./houseDetailsStartButton');
+const { handleHouseDetailsModal } = require('./houseDetailsModal');
+const { handleHouseSendButton } = require('./houseSendButton');
+const { handleAuctionStartButton } = require('./auctionStartButton');
+const { handleAuctionModal } = require('./auctionModal');
+const { handleAuctionBidButton } = require('./auctionBidButton');
+const { handleAuctionBidModal } = require('./auctionBidModal');
+const { handleAuctionEndButton } = require('./auctionEndButton');
 const {
   CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
@@ -66,6 +77,17 @@ const {
   POLICE_EXAM_ANSWER_PREFIX,
   WRD_EXAM_START_PREFIX,
   WRD_EXAM_ANSWER_PREFIX,
+  HOUSE_START_PREFIX,
+  HOUSE_CATEGORY_PREFIX,
+  HOUSE_MODAL_PREFIX,
+  HOUSE_DETAILS_START_PREFIX,
+  HOUSE_DETAILS_MODAL_PREFIX,
+  HOUSE_SEND_PREFIX,
+  AUCTION_START_PREFIX,
+  AUCTION_MODAL_PREFIX,
+  AUCTION_BID_PREFIX,
+  AUCTION_BID_MODAL_PREFIX,
+  AUCTION_END_PREFIX,
 } = require('./constants');
 
 async function routeInteraction(interaction, commands) {
@@ -102,6 +124,12 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${POLICE_EXAM_ANSWER_PREFIX}:`)) return await handlePoliceExamAnswerButton(interaction);
       if (id.startsWith(`${WRD_EXAM_START_PREFIX}:`)) return await handleWrdExamStartButton(interaction);
       if (id.startsWith(`${WRD_EXAM_ANSWER_PREFIX}:`)) return await handleWrdExamAnswerButton(interaction);
+      if (id.startsWith(`${HOUSE_START_PREFIX}:`)) return await handleHouseStartButton(interaction);
+      if (id.startsWith(`${HOUSE_DETAILS_START_PREFIX}:`)) return await handleHouseDetailsStartButton(interaction);
+      if (id.startsWith(`${HOUSE_SEND_PREFIX}:`)) return await handleHouseSendButton(interaction);
+      if (id.startsWith(`${AUCTION_START_PREFIX}:`)) return await handleAuctionStartButton(interaction);
+      if (id.startsWith(`${AUCTION_BID_PREFIX}:`)) return await handleAuctionBidButton(interaction);
+      if (id.startsWith(`${AUCTION_END_PREFIX}:`)) return await handleAuctionEndButton(interaction);
       return;
     }
 
@@ -113,6 +141,7 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${APP_MIC_SELECT_PREFIX}:`)) return await handleApplicationMicSelect(interaction);
       if (id === APP_REVIEW_SELECT_ID) return await handleApplicationReviewSelect(interaction);
       if (id.startsWith(`${MAFIA_SIZE_PREFIX}:`)) return await handleMafiaSizeSelect(interaction);
+      if (id.startsWith(`${HOUSE_CATEGORY_PREFIX}:`)) return await handleHouseCategorySelect(interaction);
       return;
     }
 
@@ -134,6 +163,10 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${APP_MODAL_PREFIX}:`)) return await handleApplicationModal(interaction);
       if (id === APP_REJECT_MODAL_ID) return await handleApplicationRejectModal(interaction);
       if (id.startsWith(`${MAFIA_MODAL_PREFIX}:`)) return await handleMafiaModal(interaction);
+      if (id.startsWith(`${HOUSE_MODAL_PREFIX}:`)) return await handleHouseModal(interaction);
+      if (id.startsWith(`${HOUSE_DETAILS_MODAL_PREFIX}:`)) return await handleHouseDetailsModal(interaction);
+      if (id.startsWith(`${AUCTION_BID_MODAL_PREFIX}:`)) return await handleAuctionBidModal(interaction);
+      if (id.startsWith(`${AUCTION_MODAL_PREFIX}:`)) return await handleAuctionModal(interaction);
     }
   } catch (error) {
     console.error('Błąd podczas obsługi interakcji:', error);

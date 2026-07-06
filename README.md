@@ -92,6 +92,30 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera oraz systemu policyjnego 
   **Wyślij** / **Anuluj**. Po kliknięciu "Wyślij" karta trafia na skonfigurowany kanał `kanal`, a jeśli
   ustawiony jest system policyjny, miejscówka pojawia się też w `/policja sprawdz-gracza`.
 
+- **`/panel zaloz-dom kanal:#kanał`** — publikuje embed z przyciskiem **"🏠 Załóż Dom"**. Klik → select menu
+  z **typem nieruchomości** (Kawalerka, Mieszkanie, Szeregowiec, Dom Jednorodzinny, Willa, Rezydencja,
+  Penthouse — `src/data/houseCategories.js`), potem pierwszy modal: właściciel, **lokalizacja**
+  (dzielnica/okolica), adres, cena, liczba pokoi. Ponieważ Discord ogranicza modal do 5 pól (i nie pozwala
+  pokazać drugiego modala w odpowiedzi na pierwszy), **dodatkowe szczegóły gracz podaje w drugim okienku**,
+  otwieranym przyciskiem "Podaj dodatkowe szczegóły": powierzchnia (m²), rok budowy, garaż (tak/nie), basen
+  (tak/nie), opis/udogodnienia. Cena, liczba pokoi, powierzchnia i rok budowy są walidowane (samo liczby w
+  sensownym zakresie), a garaż/basen muszą być "tak" albo "nie" — inaczej bot poprosi o poprawę. Bot
+  generuje unikalny numer aktu (np. `DOM-4821`) i pokazuje prywatny podgląd **Aktu Własności Domu RP** z
+  przyciskami **Wyślij** / **Anuluj**; po "Wyślij" akt trafia na skonfigurowany kanał `kanal`.
+
+- **`/panel aukcja-domow kanal:#kanał`** — publikuje embed z przyciskiem **"🏛️ Rozpocznij aukcję"**.
+  W odróżnieniu od pozostałych paneli, ten przycisk działa **tylko dla roli administracyjnej**
+  (`HOUSE_AUCTION_ADMIN_ROLE_ID`, domyślnie ustawiona na stałą rolę) — każdy inny użytkownik dostanie
+  odmowę. Administrator wypełnia modal: nazwa/opis domu, lokalizacja, cena wywoławcza, minimalna podbitka,
+  opis. Bot publikuje na kanale `kanal` ogłoszenie aukcji z przyciskami **Licytuj** (dostępny dla
+  wszystkich) i **Zakończ aukcję** (dostępny dla roli administracyjnej albo samego prowadzącego). Klik
+  "Licytuj" otwiera modal na kwotę — musi być równa lub wyższa od ceny wywoławczej (pierwsza oferta) albo od
+  aktualnej najwyższej oferty + minimalna podbitka (kolejne oferty), inaczej bot odrzuci ofertę z podaniem
+  wymaganego minimum. Każda przyjęta oferta od razu aktualizuje ogłoszenie na żywo (najwyższa oferta +
+  licytujący). "Zakończ aukcję" zamyka licytację, ogłasza zwycięzcę (albo brak ofert) i usuwa przyciski.
+  Cały stan aukcji (oferty, licytujący, status) jest zapisany w trwałym rejestrze, więc przetrwa restart
+  bota.
+
 ## System Policyjny (`/policja`)
 
 W odróżnieniu od `/panel` (który tylko **publikuje** panele dla graczy), `/policja` to zestaw komend
@@ -161,7 +185,8 @@ nawet jeśli zapomnisz go dodać w `GUILD_ID` na Railway — nie trzeba go tam o
 
 ### Trwały rejestr danych (wymaga Railway Volume!)
 
-Wszystkie panele (`stworz-dowod`, `weryfikacja`, `prawojazdy`, `pojazd`, `mafia`) oraz cały system
+Wszystkie panele (`stworz-dowod`, `weryfikacja`, `prawojazdy`, `pojazd`, `mafia`, `zaloz-dom`,
+`aukcja-domow`) oraz cały system
 policyjny (mandaty, punkty karne, lista gończa, zawieszenia, rangi, CBŚP, dziennik służby) automatycznie
 zapisują dane do jednego pliku JSON (`src/utils/registry.js`), żeby `/policja sprawdz-gracza` mogło je
 odnaleźć po nicku Roblox. **To już działa samo z siebie** — problem w tym, że Railway domyślnie ma
@@ -279,6 +304,7 @@ w tym samym trwałym rejestrze co reszta danych (patrz sekcja "Trwały rejestr d
    | `POLICE_GUILD_ID` | opcjonalnie — ID serwera, na którym ma działać `/policja`; domyślnie już ustawione na główny serwer |
    | `LEGACY_GUILD_ID` | opcjonalnie — ID "starego" serwera, na którym ma działać `/robloxban`; domyślnie już ustawione |
    | `ROBLOX_BAN_CHANNEL_ID` | opcjonalnie — ID kanału logów banów dla `/robloxban`; domyślnie już ustawione |
+   | `HOUSE_AUCTION_ADMIN_ROLE_ID` | opcjonalnie — ID roli uprawnionej do rozpoczynania/kończenia aukcji domów (`/panel aukcja-domow`); domyślnie już ustawione |
 
 5. Po zapisaniu zmiennych Railway zbuduje i uruchomi bota. `npm start` najpierw rejestruje/aktualizuje
    komendy slash (`node src/deploy-commands.js`), a potem startuje bota (`node src/index.js`) —

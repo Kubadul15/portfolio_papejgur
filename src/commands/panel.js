@@ -6,6 +6,7 @@ const {
   ButtonStyle,
   ChannelType,
 } = require('discord.js');
+const config = require('../config');
 const {
   buildPanelEmbed,
   buildVerificationPanelEmbed,
@@ -14,6 +15,8 @@ const {
   buildTicketPanelEmbed,
   buildApplicationPanelEmbed,
   buildMafiaPanelEmbed,
+  buildHousePanelEmbed,
+  buildAuctionPanelEmbed,
 } = require('../utils/embeds');
 const {
   CREATE_ID_BUTTON_ID,
@@ -22,6 +25,8 @@ const {
   TICKET_CREATE_PREFIX,
   APP_START_PREFIX,
   MAFIA_START_PREFIX,
+  HOUSE_START_PREFIX,
+  AUCTION_START_PREFIX,
 } = require('../interactions/constants');
 
 module.exports = {
@@ -148,6 +153,30 @@ module.exports = {
           option
             .setName('kanal')
             .setDescription('Kanał, na który trafiają zarejestrowane organizacje')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('zaloz-dom')
+        .setDescription('Wysyła panel rejestracji domu/nieruchomości RP')
+        .addChannelOption((option) =>
+          option
+            .setName('kanal')
+            .setDescription('Kanał, na który trafiają zarejestrowane domy')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('aukcja-domow')
+        .setDescription('Wysyła panel aukcji domów (rozpoczynanie tylko dla wyznaczonej roli administracyjnej)')
+        .addChannelOption((option) =>
+          option
+            .setName('kanal')
+            .setDescription('Kanał, na który trafiają ogłoszenia aukcji')
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
             .setRequired(true)
         )
@@ -290,6 +319,38 @@ module.exports = {
           .setCustomId(`${MAFIA_START_PREFIX}:${channel.id}`)
           .setLabel('Stwórz Organizację')
           .setEmoji('🔫')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      await interaction.reply({ embeds: [embed], components: [row] });
+      return;
+    }
+
+    if (subcommand === 'zaloz-dom') {
+      const channel = interaction.options.getChannel('kanal');
+
+      const embed = buildHousePanelEmbed(channel);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${HOUSE_START_PREFIX}:${channel.id}`)
+          .setLabel('Załóż Dom')
+          .setEmoji('🏠')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      await interaction.reply({ embeds: [embed], components: [row] });
+      return;
+    }
+
+    if (subcommand === 'aukcja-domow') {
+      const channel = interaction.options.getChannel('kanal');
+
+      const embed = buildAuctionPanelEmbed(channel, `<@&${config.houseAuctionAdminRoleId}>`);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${AUCTION_START_PREFIX}:${channel.id}`)
+          .setLabel('Rozpocznij aukcję')
+          .setEmoji('🏛️')
           .setStyle(ButtonStyle.Primary)
       );
 
