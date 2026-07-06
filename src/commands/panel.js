@@ -65,12 +65,6 @@ module.exports = {
             .setDescription('Opcjonalna rola nadawana automatycznie po zdanym egzaminie')
             .setRequired(false)
         )
-        .addRoleOption((option) =>
-          option
-            .setName('wymagana-ranga')
-            .setDescription('Opcjonalna rola wymagana do podejścia (np. nadawana po stworzeniu Dowodu)')
-            .setRequired(false)
-        )
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -197,14 +191,11 @@ module.exports = {
     if (subcommand === 'prawojazdy') {
       const channel = interaction.options.getChannel('kanal');
       const role = interaction.options.getRole('ranga');
-      const requiredRole = interaction.options.getRole('wymagana-ranga');
 
-      const embed = buildExamPanelEmbed(channel, role, requiredRole);
+      const embed = buildExamPanelEmbed(channel, role);
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId(
-            `${EXAM_START_PREFIX}:${channel.id}:${role ? role.id : ''}:${requiredRole ? requiredRole.id : ''}`
-          )
+          .setCustomId(`${EXAM_START_PREFIX}:${channel.id}:${role ? role.id : ''}`)
           .setLabel('Podejdź do egzaminu')
           .setEmoji('🚗')
           .setStyle(ButtonStyle.Primary)

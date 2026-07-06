@@ -77,9 +77,8 @@ function buildVerificationPanelEmbed(role) {
     .setFooter({ text: config.serverName });
 }
 
-function buildExamPanelEmbed(targetChannel, awardRole, requiredRole) {
+function buildExamPanelEmbed(targetChannel, awardRole) {
   const roleLine = awardRole ? `\n\nPo zdanym egzaminie automatycznie otrzymasz rolę ${awardRole}.` : '';
-  const requiredLine = requiredRole ? `\n\nWymagana jest rola ${requiredRole}, aby móc przystąpić.` : '';
 
   return new EmbedBuilder()
     .setColor(config.embedColor)
@@ -89,7 +88,7 @@ function buildExamPanelEmbed(targetChannel, awardRole, requiredRole) {
         'Najpierw wybierzesz kategorię i wypełnisz krótki formularz zgłoszeniowy (imię i nazwisko RP, ' +
         'wiek RP, nick Roblox), a następnie odpowiesz na losowe pytania egzaminu teoretycznego — ' +
         'dokładnie jak na prawdziwym egzaminie. Minimalny wiek zależy od wybranej kategorii.\n\n' +
-        `Po zdanym egzaminie Twoje Prawo Jazdy RP trafi na kanał ${targetChannel}.${roleLine}${requiredLine}`
+        `Po zdanym egzaminie Twoje Prawo Jazdy RP trafi na kanał ${targetChannel}.${roleLine}`
     )
     .setFooter({ text: config.serverName });
 }

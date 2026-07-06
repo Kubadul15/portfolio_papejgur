@@ -17,11 +17,9 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera oraz systemu policyjnego 
   co wszystkie inne dowody, a gracz **automatycznie otrzymuje podaną rolę** (np. "Zweryfikowany"). Nie ma tu
   już starego mechanizmu z kodem wklejanym do opisu profilu Roblox — rola wymaga tylko poprawnego dowodu.
 
-- **`/panel prawojazdy kanal:#kanał [ranga:@rola] [wymagana-ranga:@rola]`** — publikuje embed z przyciskiem
-  **"Podejdź do egzaminu"**. Jeśli podasz `wymagana-ranga` (np. rolę "Obywatel" nadawaną przez
-  `stworz-dowod`), przycisk **zadziała tylko dla osób posiadających tę rolę** — bez niej bot od razu
-  odpowie błędem, więc **nie da się podejść do egzaminu bez dowodu**. Po przejściu bramki gracz wybiera z
-  listy **kategorię prawa jazdy** (pełna lista jak w polskim systemie: AM, A1, A2, A, B1, B, B+E, C1, C1+E,
+- **`/panel prawojazdy kanal:#kanał [ranga:@rola]`** — publikuje embed z przyciskiem
+  **"Podejdź do egzaminu"**. Każdy może kliknąć przycisk bez żadnych dodatkowych wymagań — gracz od razu
+  wybiera z listy **kategorię prawa jazdy** (pełna lista jak w polskim systemie: AM, A1, A2, A, B1, B, B+E, C1, C1+E,
   C, C+E, D1, D1+E, D, D+E, T — każda ze swoim minimalnym wiekiem, np. B od 18 lat, AM od 14 lat —
   `src/data/licenseCategories.js`), potem wypełnia formularz zgłoszeniowy (imię i nazwisko RP, wiek RP,
   nick Roblox — weryfikowany tak samo jak w dowodzie). **Wiek musi być liczbą 1–100, a dodatkowo musi
@@ -187,19 +185,17 @@ resetuje się przy każdym redeployu z Railwaya.
 
 ### Realistyczny łańcuch wymagań
 
-Panele można spiąć w logiczny ciąg zależności, tak żeby nie dało się "przeskoczyć" etapów:
+Panel `prawojazdy` jest teraz otwarty dla każdego — bez wymaganej roli (dowód nie jest już potrzebny, żeby
+podejść do egzaminu). Rola z egzaminu można za to nadal wymagać przy rejestracji pojazdu:
 
 ```
-/panel stworz-dowod ranga:@Obywatel
-        ↓ (po wysłaniu dowodu automatycznie: rola @Obywatel)
-/panel prawojazdy kanal:#prawo-jazdy ranga:@Kierowca wymagana-ranga:@Obywatel
+/panel prawojazdy kanal:#prawo-jazdy ranga:@Kierowca
         ↓ (po zdanym egzaminie automatycznie: rola @Kierowca)
 /panel pojazd kanal:#pojazdy wymagana-ranga:@Kierowca
 ```
 
-Wszystkie role są opcjonalne — jeśli ich nie podasz przy tworzeniu panelu, odpowiednia bramka/nadawanie po
-prostu nie działa dla tego konkretnego panelu (zachowanie sprzed tej zmiany). Panele utworzone przed
-dodaniem tych parametrów nadal działają bez zmian (kompatybilność wsteczna).
+Rola nadawana po zdanym egzaminie (`ranga`) jest opcjonalna — jeśli jej nie podasz, panel po prostu nie
+nadaje żadnej roli po zdaniu.
 
 **Ograniczenie:** bot nie ma bazy danych, więc nie porównuje automatycznie imienia i nazwiska podanego w
 dowodzie z tym podanym później w prawie jazdy — każdy formularz to osobny, niezależny wpis. Wymóg posiadania
