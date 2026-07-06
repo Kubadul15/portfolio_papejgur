@@ -1,23 +1,19 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const config = require('../config');
 const { verifyRobloxUsername } = require('../utils/roblox');
-
 const PERM_KEYWORDS = ['perm', 'permanentny', 'permanentnie', 'staly', 'stały'];
-
+const ALLOWED_ROLE_ID = '1456335415450800168';
 function parseBanDuration(raw) {
   const normalized = raw.trim().toLowerCase();
   if (PERM_KEYWORDS.includes(normalized)) {
     return { permanent: true, days: null };
   }
-
   const days = Number(normalized);
   if (!Number.isInteger(days) || days <= 0) {
     return null;
   }
-
   return { permanent: false, days };
 }
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('robloxban')
@@ -28,7 +24,6 @@ module.exports = {
       o.setName('czas').setDescription('Liczba dni (np. 7) albo "perm" dla bana permanentnego').setRequired(true)
     )
     .addStringOption((o) => o.setName('powod').setDescription('Powód bana').setRequired(true)),
-
   async execute(interaction) {
     // Ten serwer dostal komende /policja - /robloxban ma dzialac odwrotnie,
     // tylko na "starym" serwerze sprzed dodania serwera policyjnego.
@@ -36,11 +31,13 @@ module.exports = {
       await interaction.reply({ content: '❌ Ta komenda jest dostępna tylko na tym serwerze.', ephemeral: true });
       return;
     }
-
+    if (!interaction.member.roles.cache.has(ALLOWED_ROLE_ID)) {
+      await interaction.reply({ content: '❌ Nie masz uprawnień do użycia tej komendy.', ephemeral: true });
+      return;
+    }
     const nick = interaction.options.getString('nick').trim();
     const rawCzas = interaction.options.getString('czas');
     const powod = interaction.options.getString('powod').trim();
-
     const duration = parseBanDuration(rawCzas);
     if (!duration) {
       await interaction.reply({
@@ -49,21 +46,17 @@ module.exports = {
       });
       return;
     }
-
     await interaction.deferReply({ ephemeral: true });
-
     let robloxData = null;
     try {
       robloxData = await verifyRobloxUsername(nick);
     } catch (error) {
       console.error('Błąd podczas weryfikacji nicku Roblox w /robloxban:', error);
     }
-
     const now = Math.floor(Date.now() / 1000);
     const durationText = duration.permanent
       ? '♾️ Permanentny'
       : `${duration.days} dni (do <t:${now + duration.days * 24 * 60 * 60}:D>)`;
-
     const embed = new EmbedBuilder()
       .setColor('#e02b2b')
       .setTitle('🚫 Ban na Robloxie')
@@ -81,11 +74,9 @@ module.exports = {
       )
       .setFooter({ text: config.serverName })
       .setTimestamp();
-
     if (robloxData && robloxData.avatarUrl) {
       embed.setThumbnail(robloxData.avatarUrl);
     }
-
     try {
       const channel = await interaction.client.channels.fetch(config.robloxBanChannelId);
       await channel.send({ embeds: [embed] });
@@ -96,7 +87,6 @@ module.exports = {
       });
       return;
     }
-
     await interaction.editReply({ content: `✅ Ban wysłany na kanał <#${config.robloxBanChannelId}>.` });
   },
 };
