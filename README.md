@@ -17,29 +17,11 @@ Bot Discord do obsługi paneli weryfikacyjnych serwera oraz systemu policyjnego 
   co wszystkie inne dowody, a gracz **automatycznie otrzymuje podaną rolę** (np. "Zweryfikowany"). Nie ma tu
   już starego mechanizmu z kodem wklejanym do opisu profilu Roblox — rola wymaga tylko poprawnego dowodu.
 
-- **`/panel prawojazdy kanal:#kanał [ranga:@rola]`** — publikuje embed z przyciskiem
-  **"Podejdź do egzaminu"**. Każdy może kliknąć przycisk bez żadnych dodatkowych wymagań — gracz od razu
-  wybiera z listy **kategorię prawa jazdy** (pełna lista jak w polskim systemie: AM, A1, A2, A, B1, B, B+E, C1, C1+E,
-  C, C+E, D1, D1+E, D, D+E, T — każda ze swoim minimalnym wiekiem, np. B od 18 lat, AM od 14 lat —
-  `src/data/licenseCategories.js`), potem wypełnia formularz zgłoszeniowy (imię i nazwisko RP, wiek RP,
-  nick Roblox — weryfikowany tak samo jak w dowodzie). **Wiek musi być liczbą 1–100, a dodatkowo musi
-  spełniać minimum wiekowe wybranej kategorii** — jeśli nie spełnia, bot odrzuca zgłoszenie z jasnym
-  komunikatem i egzamin się nie zaczyna. Dopiero wtedy, tak jak na prawdziwym egzaminie, gracz odpowiada po
-  kolei na 6 losowo wybranych pytań teoretycznych (z puli ~20 w `src/data/examQuestions.js` — inny zestaw za
-  każdym podejściem) z 4 odpowiedziami do wyboru. Dopuszczalna jest tylko jedna pomyłka — po zdanym
-  egzaminie pojawia się karta **Prawo Jazdy RP** (bardzo podobna do Dowodu Osobistego RP) z wybraną
-  kategorią, numerem i wynikiem, którą gracz wysyła przyciskiem **Wyślij** na wskazany przy tworzeniu panelu
-  kanał. Jeśli podasz opcjonalny parametr `ranga`, bot **automatycznie nada tę rolę** po zdanym egzaminie
-  (np. rolę "Kierowca", wymaganą potem przez panel rejestracji pojazdu — patrz niżej). Po oblanym egzaminie
-  obowiązuje 15-minutowy cooldown, zanim będzie można podejść ponownie. Cały przebieg egzaminu (obie role,
-  kategoria, wylosowana kolejność pytań, wynik, kanał docelowy) jest zakodowany w przyciskach i treści
-  wiadomości, więc też przetrwa restart bota.
-
 - **`/panel pojazd kanal:#kanał wymagana-ranga:@rola`** — publikuje embed z przyciskiem **"Zarejestruj
-  pojazd"**. Klik działa **tylko** dla graczy posiadających `wymagana-ranga` (np. rolę "Kierowca" nadawaną
-  automatycznie po zdaniu prawa jazdy — patrz wyżej); bez niej bot odpowie błędem i nic więcej się nie
-  wydarzy. Jeśli rola się zgadza, gracz wybiera z listy **typ/kategorię pojazdu** (ta sama lista co przy
-  prawie jazdy), a potem wypełnia formularz: marka i model, rok produkcji, kolor, silnik/pojemność,
+  pojazd"**. Klik działa **tylko** dla graczy posiadających `wymagana-ranga` (dowolna rola wskazana przy
+  tworzeniu panelu, np. nadawana przez `stworz-dowod`/`weryfikacja`); bez niej bot odpowie błędem i nic
+  więcej się nie wydarzy. Jeśli rola się zgadza, gracz wybiera z listy **typ/kategorię pojazdu**
+  (`src/data/licenseCategories.js`), a potem wypełnia formularz: marka i model, rok produkcji, kolor, silnik/pojemność,
   właściciel (imię i nazwisko RP). **Rok produkcji musi być prawidłową czterocyfrową liczbą** (1900 do
   przyszłego roku) — inaczej bot odrzuci formularz. Ponieważ Discord ogranicza modal do 5 pól (i nie
   pozwala pokazać drugiego modala w odpowiedzi na pierwszy), **numer rejestracyjny gracz podaje sam w
@@ -185,7 +167,7 @@ nawet jeśli zapomnisz go dodać w `GUILD_ID` na Railway — nie trzeba go tam o
 
 ### Trwały rejestr danych (wymaga Railway Volume!)
 
-Wszystkie panele (`stworz-dowod`, `weryfikacja`, `prawojazdy`, `pojazd`, `mafia`, `zaloz-dom`,
+Wszystkie panele (`stworz-dowod`, `weryfikacja`, `pojazd`, `mafia`, `zaloz-dom`,
 `aukcja-domow`) oraz cały system
 policyjny (mandaty, punkty karne, lista gończa, zawieszenia, rangi, CBŚP, dziennik służby) automatycznie
 zapisują dane do jednego pliku JSON (`src/utils/registry.js`), żeby `/policja sprawdz-gracza` mogło je
@@ -208,25 +190,15 @@ od tego, czy trzymane są w JSON czy YAML — to ograniczenie hostingu, a nie fo
 Bez tego kroku bot nadal działa normalnie (wszystkie panele i komendy `/policja` też), ale rejestr
 resetuje się przy każdym redeployu z Railwaya.
 
-### Realistyczny łańcuch wymagań
+### Łańcuch wymagań
 
-Panel `prawojazdy` jest teraz otwarty dla każdego — bez wymaganej roli (dowód nie jest już potrzebny, żeby
-podejść do egzaminu). Rola z egzaminu można za to nadal wymagać przy rejestracji pojazdu:
+Panel `pojazd` można spiąć z dowolną wcześniej nadaną rolą, np. z `stworz-dowod`/`weryfikacja`:
 
 ```
-/panel prawojazdy kanal:#prawo-jazdy ranga:@Kierowca
-        ↓ (po zdanym egzaminie automatycznie: rola @Kierowca)
-/panel pojazd kanal:#pojazdy wymagana-ranga:@Kierowca
+/panel stworz-dowod ranga:@Obywatel
+        ↓ (po wysłaniu dowodu automatycznie: rola @Obywatel)
+/panel pojazd kanal:#pojazdy wymagana-ranga:@Obywatel
 ```
-
-Rola nadawana po zdanym egzaminie (`ranga`) jest opcjonalna — jeśli jej nie podasz, panel po prostu nie
-nadaje żadnej roli po zdaniu.
-
-**Ograniczenie:** bot nie ma bazy danych, więc nie porównuje automatycznie imienia i nazwiska podanego w
-dowodzie z tym podanym później w prawie jazdy — każdy formularz to osobny, niezależny wpis. Wymóg posiadania
-roli z dowodu eliminuje próby ominięcia całego procesu, ale nie wymusza identycznej pisowni danych między
-panelami. Włącz `ADMIN_LOG_CHANNEL_ID` (patrz niżej), żeby administracja mogła łatwo porównać zgłoszone dane
-i ręcznie zareagować na niespójności.
 
 Kolejne panele (np. `/panel ...`) można dopisywać jako kolejne subkomendy w `src/commands/panel.js`.
 
@@ -360,7 +332,7 @@ płacić). Do stałego działania bota służy Railway opisany w sekcji 2 powyż
 Komenda `/panel` wymaga uprawnienia **Zarządzanie serwerem** — widzą i mogą jej użyć tylko
 administratorzy/staff, żeby zwykli gracze nie mogli tworzyć własnych paneli.
 
-Dla `/panel weryfikacja` (oraz opcjonalnych ról w `stworz-dowod`/`prawojazdy`) bot dodatkowo musi mieć
+Dla `/panel weryfikacja` (oraz opcjonalnej roli w `stworz-dowod`) bot dodatkowo musi mieć
 uprawnienie **Zarządzaj rolami**, a jego własna rola (najwyższa rola bota na liście ról serwera) musi być
 **wyżej** niż rola nadawana graczom — inaczej Discord nie pozwoli botowi jej przyznać.
 

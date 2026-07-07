@@ -10,7 +10,6 @@ const config = require('../config');
 const {
   buildPanelEmbed,
   buildVerificationPanelEmbed,
-  buildExamPanelEmbed,
   buildVehiclePanelEmbed,
   buildTicketPanelEmbed,
   buildApplicationPanelEmbed,
@@ -20,7 +19,6 @@ const {
 } = require('../utils/embeds');
 const {
   CREATE_ID_BUTTON_ID,
-  EXAM_START_PREFIX,
   VEHICLE_START_PREFIX,
   TICKET_CREATE_PREFIX,
   APP_START_PREFIX,
@@ -55,26 +53,8 @@ module.exports = {
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName('prawojazdy')
-        .setDescription('Wysyła panel egzaminu na Prawo Jazdy RP')
-        .addChannelOption((option) =>
-          option
-            .setName('kanal')
-            .setDescription('Kanał, na który trafiają zdane prawa jazdy')
-            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-            .setRequired(true)
-        )
-        .addRoleOption((option) =>
-          option
-            .setName('ranga')
-            .setDescription('Opcjonalna rola nadawana automatycznie po zdanym egzaminie')
-            .setRequired(false)
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
         .setName('pojazd')
-        .setDescription('Wysyła panel rejestracji pojazdu (wymaga posiadania prawa jazdy)')
+        .setDescription('Wysyła panel rejestracji pojazdu')
         .addChannelOption((option) =>
           option
             .setName('kanal')
@@ -210,23 +190,6 @@ module.exports = {
           .setCustomId(`${CREATE_ID_BUTTON_ID}:${role.id}`)
           .setLabel('Zweryfikuj się')
           .setEmoji('🔐')
-          .setStyle(ButtonStyle.Primary)
-      );
-
-      await interaction.reply({ embeds: [embed], components: [row] });
-      return;
-    }
-
-    if (subcommand === 'prawojazdy') {
-      const channel = interaction.options.getChannel('kanal');
-      const role = interaction.options.getRole('ranga');
-
-      const embed = buildExamPanelEmbed(channel, role);
-      const row = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId(`${EXAM_START_PREFIX}:${channel.id}:${role ? role.id : ''}`)
-          .setLabel('Podejdź do egzaminu')
-          .setEmoji('🚗')
           .setStyle(ButtonStyle.Primary)
       );
 

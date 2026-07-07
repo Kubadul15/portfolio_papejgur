@@ -27,9 +27,6 @@ function createCooldown(durationMs) {
   return { setCooldown, getCooldownExpiresAt };
 }
 
-const COOLDOWN_MS = 15 * 60 * 1000; // 15 minut po oblanym egzaminie
-const examCooldown = createCooldown(COOLDOWN_MS);
-
 const APPLICATION_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h po odrzuconym podaniu
 const applicationCooldown = createCooldown(APPLICATION_COOLDOWN_MS);
 
@@ -40,9 +37,6 @@ const WRD_EXAM_COOLDOWN_MS = 20 * 60 * 1000; // 20 minut po oblanym egzaminie po
 const wrdExamCooldown = createCooldown(WRD_EXAM_COOLDOWN_MS);
 
 module.exports = {
-  setFailureCooldown: examCooldown.setCooldown,
-  getCooldownExpiresAt: examCooldown.getCooldownExpiresAt,
-  COOLDOWN_MS,
   setApplicationRejectionCooldown: applicationCooldown.setCooldown,
   getApplicationCooldownExpiresAt: applicationCooldown.getCooldownExpiresAt,
   APPLICATION_COOLDOWN_MS,

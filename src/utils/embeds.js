@@ -77,82 +77,12 @@ function buildVerificationPanelEmbed(role) {
     .setFooter({ text: config.serverName });
 }
 
-function buildExamPanelEmbed(targetChannel, awardRole) {
-  const roleLine = awardRole ? `\n\nPo zdanym egzaminie automatycznie otrzymasz rolę ${awardRole}.` : '';
-
-  return new EmbedBuilder()
-    .setColor(config.embedColor)
-    .setTitle('🚗 Panel — Egzamin na Prawo Jazdy RP')
-    .setDescription(
-      'Kliknij przycisk poniżej, aby podejść do egzaminu na **Prawo Jazdy RP**.\n\n' +
-        'Najpierw wybierzesz kategorię i wypełnisz krótki formularz zgłoszeniowy (imię i nazwisko RP, ' +
-        'wiek RP, nick Roblox), a następnie odpowiesz na losowe pytania egzaminu teoretycznego — ' +
-        'dokładnie jak na prawdziwym egzaminie. Minimalny wiek zależy od wybranej kategorii.\n\n' +
-        `Po zdanym egzaminie Twoje Prawo Jazdy RP trafi na kanał ${targetChannel}.${roleLine}`
-    )
-    .setFooter({ text: config.serverName });
-}
-
-function buildExamCandidateEmbed({ discordUser, fullName, age, category, robloxData, awardRoleId }) {
-  const embed = new EmbedBuilder()
-    .setColor(config.embedColor)
-    .setTitle('🚗 Egzamin na Prawo Jazdy RP')
-    .setAuthor({ name: discordUser.tag, iconURL: discordUser.displayAvatarURL() })
-    .addFields(
-      { name: '👤 Dane', value: fullName, inline: false },
-      { name: '📅 Wiek', value: String(age), inline: true },
-      { name: '🚙 Kategoria', value: category, inline: true },
-      {
-        name: '🎲 Nick Roblox',
-        value: `[@${robloxData.name}](https://www.roblox.com/users/${robloxData.id}/profile)`,
-        inline: false,
-      }
-    )
-    .setFooter({ text: config.serverName });
-
-  if (awardRoleId) {
-    embed.addFields({ name: '🔑 Rola po zdaniu', value: `<@&${awardRoleId}>`, inline: true });
-  }
-
-  if (robloxData.avatarUrl) {
-    embed.setThumbnail(robloxData.avatarUrl);
-  }
-
-  return embed;
-}
-
 function buildExamQuestionEmbed(question, index, total, score) {
   return new EmbedBuilder()
     .setColor(config.embedColor)
     .setTitle(`Pytanie ${index + 1} / ${total}`)
     .setDescription(question.question)
     .setFooter({ text: `Aktualny wynik: ${score}/${index}` });
-}
-
-function buildExamResultEmbed({ candidateEmbed, score, total, passed, licenseNumber }) {
-  const embed = EmbedBuilder.from(candidateEmbed);
-
-  if (passed) {
-    embed
-      .setColor(config.embedColor)
-      .setTitle('🚗 Prawo Jazdy RP')
-      .addFields(
-        { name: '✅ Wynik egzaminu', value: `${score}/${total}`, inline: true },
-        { name: '🆔 Numer', value: licenseNumber, inline: true }
-      )
-      .setTimestamp();
-  } else {
-    embed
-      .setColor('#e02b2b')
-      .setTitle('❌ Egzamin niezdany')
-      .addFields({
-        name: 'Wynik',
-        value: `${score}/${total} — spróbuj ponownie, korzystając z przycisku w panelu.`,
-        inline: false,
-      });
-  }
-
-  return embed;
 }
 
 function getEmbedFieldValue(embed, nameIncludes) {
@@ -421,10 +351,7 @@ module.exports = {
   buildPanelEmbed,
   buildIdCardEmbed,
   buildVerificationPanelEmbed,
-  buildExamPanelEmbed,
-  buildExamCandidateEmbed,
   buildExamQuestionEmbed,
-  buildExamResultEmbed,
   getEmbedFieldValue,
   buildVehiclePanelEmbed,
   buildVehicleCardEmbed,

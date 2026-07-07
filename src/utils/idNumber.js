@@ -10,8 +10,4 @@ function generateIdNumber(prefix = config.idPrefix) {
   return `${prefix}-${number}`;
 }
 
-function generateLicenseNumber() {
-  return generateIdNumber('PJ');
-}
-
-module.exports = { generateIdNumber, generateLicenseNumber };
+module.exports = { generateIdNumber };

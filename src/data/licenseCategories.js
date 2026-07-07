@@ -1,5 +1,5 @@
-// Pelna lista kategorii prawa jazdy (jak w polskim systemie) wraz z
-// minimalnym wiekiem wymaganym do przystapienia do egzaminu.
+// Pelna lista kategorii prawa jazdy (jak w polskim systemie) - uzywana
+// jako lista typow/kategorii pojazdu przy rejestracji w /panel pojazd.
 const LICENSE_CATEGORIES = [
   { value: 'AM', description: 'Motorower, czterokołowiec lekki (od 14 lat)', minAge: 14 },
   { value: 'A1', description: 'Motocykl do 125 cm³ (od 16 lat)', minAge: 16 },
@@ -19,9 +19,4 @@ const LICENSE_CATEGORIES = [
   { value: 'D+E', description: 'Autobus z przyczepą (od 24 lat)', minAge: 24 },
 ];
 
-function getCategoryMinAge(categoryValue) {
-  const category = LICENSE_CATEGORIES.find((c) => c.value === categoryValue);
-  return category ? category.minAge : 0;
-}
-
-module.exports = { LICENSE_CATEGORIES, getCategoryMinAge };
+module.exports = { LICENSE_CATEGORIES };

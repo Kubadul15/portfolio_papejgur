@@ -9,16 +9,6 @@ module.exports = {
   MODAL_FIELD_CITIZENSHIP: 'citizenship',
   MODAL_FIELD_ROBLOX: 'roblox_username',
 
-  // Panel egzaminu na Prawo Jazdy RP. Kanal docelowy, numer pytania
-  // i dotychczasowy wynik sa zakodowane w customId przyciskow, a dane
-  // kandydata (imie, wiek, Roblox) w embedzie wiadomosci - dzieki temu
-  // caly wieloetapowy egzamin jest bezstanowy i przetrwa restart bota.
-  EXAM_START_PREFIX: 'exam_start',
-  EXAM_CATEGORY_PREFIX: 'exam_category',
-  EXAM_MODAL_PREFIX: 'exam_modal',
-  EXAM_ANSWER_PREFIX: 'exam_ans',
-  EXAM_SEND_PREFIX: 'exam_send',
-
   // Panel rejestracji pojazdu. Wymagana rola sprawdzana jest tylko na
   // starcie (nikt nic nie dostaje), a kanal docelowy jest kodowany w
   // customId dalej, tak jak w pozostalych panelach.
@@ -72,7 +62,7 @@ module.exports = {
   MODAL_FIELD_APP_REJECT_REASON: 'app_reject_reason',
 
   // Panel rejestracji Mafii/Gangu. Kanal docelowy jest kodowany w
-  // customId, tak jak w pojezdzie/prawie jazdy - bez bazy danych.
+  // customId, tak jak w pojezdzie - bez bazy danych.
   MAFIA_START_PREFIX: 'mafia_start',
   MAFIA_SIZE_PREFIX: 'mafia_size',
   MAFIA_MODAL_PREFIX: 'mafia_modal',

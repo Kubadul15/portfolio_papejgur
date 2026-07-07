@@ -160,19 +160,6 @@ function recordIdCard(discordId, discordTag, { fullName, age, citizenship, idNum
   });
 }
 
-function recordLicenseCategory(discordId, discordTag, { category, licenseNumber, robloxUsername }) {
-  mutate((data) => {
-    const user = ensureUser(data, discordId, discordTag);
-    user.license.categories.push({ category, licenseNumber, issuedAt: Date.now() });
-    if (robloxUsername && !user.robloxUsernames.some((n) => n.toLowerCase() === robloxUsername.toLowerCase())) {
-      user.robloxUsernames.push(robloxUsername);
-    }
-    if (robloxUsername) {
-      data.robloxIndex[robloxUsername.toLowerCase()] = discordId;
-    }
-  });
-}
-
 function recordVehicle(discordId, discordTag, { make, year, color, engine, category, plateNumber, vin }) {
   mutate((data) => {
     const user = ensureUser(data, discordId, discordTag);
@@ -530,7 +517,6 @@ module.exports = {
   stopRoleplaySession,
   getRoleplaySession,
   recordIdCard,
-  recordLicenseCategory,
   recordVehicle,
   recordMafiaOrg,
   recordHouse,
