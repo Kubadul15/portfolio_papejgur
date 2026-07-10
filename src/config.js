@@ -17,7 +17,7 @@ const roleplaySessionCode = process.env.ROLEPLAY_SESSION_CODE || 'pt9iqi8i';
 // WAITING_ROOM_VOICE_CHANNEL_ID, WAITING_ROOM_NOTIFY_CHANNEL_ID, WAITING_ROOM_PING_ROLE_ID.
 const waitingRoomVoiceChannelId = process.env.WAITING_ROOM_VOICE_CHANNEL_ID || '1513546690504687728';
 const waitingRoomNotifyChannelId = process.env.WAITING_ROOM_NOTIFY_CHANNEL_ID || '1525129575011717150';
-const waitingRoomPingRoleId = process.env.WAITING_ROOM_PING_ROLE_ID || '1524338911046799440';
+const waitingRoomPingRoleId = process.env.WAITING_ROOM_PING_ROLE_ID || '1456335415450800168';
 const guildIds = Array.from(
   new Set([
     ...requireEnv('GUILD_ID')
