@@ -2,16 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../config');
 
-// Jedyny w calym bocie modul trzymajacy stan poza Discordem - trwaly rejestr
-// dowodow/praw jazdy/pojazdow/systemu policyjnego, zapisywany do pliku JSON
-// (sciezka: config.registryPath). Na Railway wymaga podpietego Volume, w
-// przeciwnym razie dane znikaja przy kazdym redeployu (patrz README).
-//
-// Prosty wzorzec read-modify-write: kazda mutacja wczytuje caly plik,
-// modyfikuje obiekt w pamieci i zapisuje z powrotem (najpierw do pliku
-// tymczasowego, potem atomowy rename) - ruch jest na tyle maly (komendy
-// Discorda), ze nie potrzeba nic bardziej wyrafinowanego niz fs *Sync.
-
 function defaultRegistry() {
   return {
     config: {
@@ -24,6 +14,7 @@ function defaultRegistry() {
     policeRecruitmentPanels: {},
     pendingVehicles: {},
     roleplaySession: null,
+    aktywnoscSessions: {},
   };
 }
 
@@ -38,6 +29,7 @@ function load() {
       policeRecruitmentPanels: parsed.policeRecruitmentPanels || {},
       pendingVehicles: parsed.pendingVehicles || {},
       roleplaySession: parsed.roleplaySession || null,
+      aktywnoscSessions: parsed.aktywnoscSessions || {},
     };
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -62,10 +54,6 @@ function mutate(fn) {
   return result;
 }
 
-// Jak w prawdziwym polskim systemie: 24 aktywne punkty karne = automatyczne
-// zawieszenie prawa jazdy. Na potrzeby RP punkty "kasują się" po tygodniu od
-// wystawienia mandatu (zamiast realnego roku) - inaczej ciążyłyby na graczu
-// całą sezonową rozgrywkę.
 const MAX_POINTS_BEFORE_SUSPENSION = 24;
 const POINTS_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -91,9 +79,6 @@ function calculateActivePoints(user, now = Date.now()) {
 }
 
 function ensureUser(data, discordId, discordTag) {
-  // Merge z domyslnym uzytkownikiem tez dla juz istniejacych wpisow - dzieki
-  // temu dodanie nowego pola (np. "organizations") w kolejnej wersji bota nie
-  // wywala starszych rekordow zapisanych na dysku przed ta zmiana.
   data.users[discordId] = { ...defaultUser(), ...(data.users[discordId] || {}) };
   if (discordTag) {
     data.users[discordId].discordTag = discordTag;
@@ -125,9 +110,6 @@ function normalizePlate(plateNumber) {
   return plateNumber.toUpperCase().replace(/\s+/g, '');
 }
 
-// Szuka pojazdu po numerze rejestracyjnym po wszystkich zarejestrowanych
-// uzytkownikach - normalizuje wielkosc liter i spacje, zeby "GD X1234" i
-// "gdx1234" trafialy w ten sam wpis.
 function findVehicleByPlate(plateNumber) {
   const data = load();
   const target = normalizePlate(plateNumber);
@@ -315,11 +297,6 @@ function setConfig(partial) {
   });
 }
 
-// Discord ograniczaja customId do 100 znakow, a egzamin wiedzy dla KMP musi
-// przeniesc kategorie/role-obslugi/role-po-akceptacji przez ~10 kolejnych
-// przyciskow z pytaniami - trzy pelne snowflaki nie zmiescilyby sie w
-// limicie. Zamiast tego zapisujemy je raz w rejestrze pod krotkim ID, a w
-// customId przyciskow leci tylko ten krotki ID.
 function savePoliceRecruitmentPanel({ categoryId, supportRoleId, acceptRoleId }) {
   return mutate((data) => {
     const panelId = Math.random().toString(36).slice(2, 8);
@@ -333,10 +310,6 @@ function getPoliceRecruitmentPanel(panelId) {
   return data.policeRecruitmentPanels[panelId] || null;
 }
 
-// Modal rejestracji pojazdu ma juz 5 pol (limit Discorda), wiec numer
-// rejestracyjny podawany recznie przez gracza zbiera drugi modal. Dane z
-// pierwszego modala trzymane sa krotko pod losowym pendingId - usuwane od
-// razu po odebraniu (jednorazowe, w przeciwienstwie do panelow rekrutacji).
 function savePendingVehicle(data) {
   return mutate((registryData) => {
     const pendingId = Math.random().toString(36).slice(2, 8);
@@ -356,15 +329,13 @@ function deletePendingVehicle(pendingId) {
   });
 }
 
-// Jedna, globalna sesja RP na caly serwer (nie per-uzytkownik jak sluzba
-// policyjna) - /roleplay start/stop. Kod sesji jest stale ustalony
-// (config.roleplaySessionCode), nie losowany za kazdym razem.
-function startRoleplaySession(discordId, discordTag) {
+function startRoleplaySession(discordId, discordTag, customCode) {
   return mutate((data) => {
     if (data.roleplaySession) {
       return { alreadyActive: true, session: data.roleplaySession };
     }
-    const session = { code: config.roleplaySessionCode, startedBy: discordId, startedByTag: discordTag, startedAt: Date.now() };
+    const code = (customCode && customCode.trim()) || config.roleplaySessionCode;
+    const session = { code, startedBy: discordId, startedByTag: discordTag, startedAt: Date.now() };
     data.roleplaySession = session;
     return { alreadyActive: false, session };
   });
@@ -384,6 +355,48 @@ function stopRoleplaySession(discordId, discordTag) {
 
 function getRoleplaySession() {
   return load().roleplaySession;
+}
+
+// Sesje aktywnosci - kazda trzymana pod ID wiadomosci ogloszenia. "order"
+// to lista ID uzytkownikow w kolejnosci, w jakiej zareagowali wybrana
+// emotka - pierwsze 3 miejsca dostaja medale w embedzie.
+function createAktywnoscSession(messageId, { channelId, emoji, cel, rola, notatka, createdBy }) {
+  mutate((data) => {
+    data.aktywnoscSessions[messageId] = {
+      channelId,
+      emoji,
+      cel,
+      rola: rola || null,
+      notatka: notatka || null,
+      createdBy,
+      order: [],
+    };
+  });
+}
+
+function addAktywnoscReaction(messageId, userId) {
+  return mutate((data) => {
+    const session = data.aktywnoscSessions[messageId];
+    if (!session) return null;
+    if (!session.order.includes(userId)) {
+      session.order.push(userId);
+    }
+    return { ...session };
+  });
+}
+
+function removeAktywnoscReaction(messageId, userId) {
+  return mutate((data) => {
+    const session = data.aktywnoscSessions[messageId];
+    if (!session) return null;
+    session.order = session.order.filter((id) => id !== userId);
+    return { ...session };
+  });
+}
+
+function getAktywnoscSession(messageId) {
+  const data = load();
+  return data.aktywnoscSessions[messageId] || null;
 }
 
 module.exports = {
@@ -418,4 +431,8 @@ module.exports = {
   setConfig,
   savePoliceRecruitmentPanel,
   getPoliceRecruitmentPanel,
+  createAktywnoscSession,
+  addAktywnoscReaction,
+  removeAktywnoscReaction,
+  getAktywnoscSession,
 };
