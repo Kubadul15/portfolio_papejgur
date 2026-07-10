@@ -11,7 +11,7 @@ const rawRegistryPath = process.env.REGISTRY_PATH || 'data/registry.json';
 const policeGuildId = process.env.POLICE_GUILD_ID || '1522536500242284685';
 const legacyGuildId = process.env.LEGACY_GUILD_ID || '1521870662162190388';
 const robloxBanChannelId = process.env.ROBLOX_BAN_CHANNEL_ID || '1522589245267644557';
-const roleplaySessionCode = process.env.ROLEPLAY_SESSION_CODE || 'pt9iqi8i';
+const roleplaySessionCode = process.env.ROLEPLAY_SESSION_CODE || 'qheef29d';
 // Kanal glosowy "poczekalnia" - gdy ktos na niego wejdzie, bot wysyla ping
 // wybranej roli na kanale docelowym. Mozna nadpisac zmiennymi:
 // WAITING_ROOM_VOICE_CHANNEL_ID, WAITING_ROOM_NOTIFY_CHANNEL_ID, WAITING_ROOM_PING_ROLE_ID.
