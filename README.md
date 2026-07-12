@@ -232,21 +232,6 @@ odwrotnie.
 Sesja jest jedna, globalna dla całego serwera (nie per-gracz) i przetrwa restart bota — stan trzymany jest
 w tym samym trwałym rejestrze co reszta danych (patrz sekcja "Trwały rejestr danych" wyżej).
 
-## Narzędzia administracyjne (`/admin`)
-
-- **`/admin przywroc-range`** — bezpiecznik do ręcznego przywrócenia jednej, z góry ustalonej roli jednej,
-  z góry ustalonej osobie na jednym, z góry ustalonym serwerze (`RESTORE_ROLE_USER_ID` /
-  `RESTORE_ROLE_GUILD_ID` / `RESTORE_ROLE_ID`). Komenda działa **wyłącznie** dla tej jednej osoby na tym
-  jednym serwerze — każdy inny użytkownik (nawet z uprawnieniami administratora) dostanie odmowę. Nic nie
-  dzieje się automatycznie ani przy starcie bota — trzeba samodzielnie użyć komendy, kiedy jest potrzebna.
-  Użycie jest logowane na `ADMIN_LOG_CHANNEL_ID`.
-
-- **`/admin usun-kanal kanal:#kanał`** — usuwa **jeden wskazany** kanał (wymaga uprawnienia **Zarządzaj
-  kanałami**). Przed usunięciem bot pokazuje ephemeralne potwierdzenie z przyciskami **Usuń kanał** /
-  **Anuluj** — jedno kliknięcie/literówka nie skasuje kanału od razu. Uprawnienie jest sprawdzane ponownie
-  przy potwierdzeniu. Usunięcie jest logowane na `ADMIN_LOG_CHANNEL_ID`. Komenda usuwa tylko kanał podany
-  jako parametr — nie ma opcji masowego usuwania wielu kanałów naraz.
-
 ## Wymagania
 
 - Node.js 20+
