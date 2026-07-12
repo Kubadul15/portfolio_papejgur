@@ -43,15 +43,6 @@ const targetChannelId = process.env.TARGET_CHANNEL_ID || '1523744374360506418';
 // ale tylko ta rola (lub sam prowadzacy aukcje) moze ja rozpoczac/zakonczyc.
 const houseAuctionAdminRoleId = process.env.HOUSE_AUCTION_ADMIN_ROLE_ID || '1523744175822995617';
 
-// /admin przywroc-range: bezpiecznik do reczengo przywrocenia jednej,
-// konkretnej roli jednej, konkretnej osobie na jednym, konkretnym serwerze -
-// komenda dziala TYLKO dla tego uzytkownika i TYLKO na tym serwerze (nikt
-// inny nie moze jej uzyc, nawet z uprawnieniami administratora). Wszystkie
-// trzy wartosci mozna nadpisac zmiennymi RESTORE_ROLE_*.
-const restoreRoleUserId = process.env.RESTORE_ROLE_USER_ID || '1040335356400250931';
-const restoreRoleGuildId = process.env.RESTORE_ROLE_GUILD_ID || '1521870662162190388';
-const restoreRoleId = process.env.RESTORE_ROLE_ID || '1523744053647380550';
-
 // GUILD_ID moze byc jednym ID albo lista ID rozdzielona przecinkami, jesli
 // bot ma dzialac (i miec zarejestrowane slash commands) na wiecej niz jednym
 // serwerze - patrz deploy-commands.js, ktore rejestruje komendy na kazdym
@@ -85,7 +76,4 @@ module.exports = {
   robloxBanChannelId,
   roleplaySessionCode,
   houseAuctionAdminRoleId,
-  restoreRoleUserId,
-  restoreRoleGuildId,
-  restoreRoleId,
 };

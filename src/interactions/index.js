@@ -37,7 +37,6 @@ const { handleAuctionModal } = require('./auctionModal');
 const { handleAuctionBidButton } = require('./auctionBidButton');
 const { handleAuctionBidModal } = require('./auctionBidModal');
 const { handleAuctionEndButton } = require('./auctionEndButton');
-const { handleAdminChannelDeleteConfirmButton } = require('./adminChannelDeleteConfirmButton');
 const {
   CREATE_ID_BUTTON_ID,
   CREATE_ID_MODAL_ID,
@@ -79,7 +78,6 @@ const {
   AUCTION_BID_PREFIX,
   AUCTION_BID_MODAL_PREFIX,
   AUCTION_END_PREFIX,
-  ADMIN_CHANNEL_DELETE_CONFIRM_PREFIX,
 } = require('./constants');
 
 async function routeInteraction(interaction, commands) {
@@ -119,9 +117,6 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${AUCTION_START_PREFIX}:`)) return await handleAuctionStartButton(interaction);
       if (id.startsWith(`${AUCTION_BID_PREFIX}:`)) return await handleAuctionBidButton(interaction);
       if (id.startsWith(`${AUCTION_END_PREFIX}:`)) return await handleAuctionEndButton(interaction);
-      if (id.startsWith(`${ADMIN_CHANNEL_DELETE_CONFIRM_PREFIX}:`)) {
-        return await handleAdminChannelDeleteConfirmButton(interaction);
-      }
       return;
     }
 
