@@ -127,4 +127,9 @@ module.exports = {
   MODAL_FIELD_AUCTION_INCREMENT: 'auction_increment',
   MODAL_FIELD_AUCTION_DESC: 'auction_desc',
   MODAL_FIELD_AUCTION_BID: 'auction_bid_amount',
+
+  // /admin usun-kanal. Slash command od razu pyta o potwierdzenie (embed +
+  // przycisk), zeby jedno klikniecie/literowka nie usuwaly kanalu od razu -
+  // customId niesie ID kanalu do usuniecia, wiec przetrwa restart bota.
+  ADMIN_CHANNEL_DELETE_CONFIRM_PREFIX: 'admin_channel_delete_confirm',
 };
