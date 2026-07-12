@@ -73,21 +73,6 @@ module.exports = {
   MODAL_FIELD_MAFIA_COLOR: 'mafia_color',
   MODAL_FIELD_MAFIA_LOCATION: 'mafia_location',
 
-  // Egzamin wiedzy dla rekrutacji do KMP (/policja rekrutacja). Kategoria i
-  // role docelowe podania sa zapisane w rejestrze pod krotkim panelId (patrz
-  // registry.savePoliceRecruitmentPanel) - customId niesie tylko ten panelId
-  // plus wynik/kolejnosc pytan, zeby zmiescic sie w limicie 100 znakow.
-  // Po zdanym egzaminie przycisk koncowy uzywa APP_START_PREFIX (powyzej),
-  // dzieki czemu dalej dziala dokladnie ten sam mechanizm co /panel rekrutacja.
-  POLICE_EXAM_START_PREFIX: 'police_exam_start',
-  POLICE_EXAM_ANSWER_PREFIX: 'police_exam_ans',
-
-  // Osobna, lzejsza rekrutacja do WRD (Wydzial Ruchu Drogowego) w ramach
-  // KMP - ten sam mechanizm co powyzej (panelId z rejestru, handoff do
-  // APP_START_PREFIX po zdaniu), ale z innym, prostszym pytaniom.
-  WRD_EXAM_START_PREFIX: 'wrd_exam_start',
-  WRD_EXAM_ANSWER_PREFIX: 'wrd_exam_ans',
-
   // Panel zaloz-dom. Podobnie jak przy pojezdzie: modal ma juz maksymalne
   // 5 pol, wiec dodatkowe szczegoly (powierzchnia/rok/garaz/basen/opis)
   // zbiera drugi modal za posrednictwem przycisku HOUSE_DETAILS_START_PREFIX

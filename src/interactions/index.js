@@ -22,10 +22,6 @@ const { handleMafiaStartButton } = require('./mafiaStartButton');
 const { handleMafiaSizeSelect } = require('./mafiaSizeSelect');
 const { handleMafiaModal } = require('./mafiaModal');
 const { handleMafiaSendButton } = require('./mafiaSendButton');
-const { handlePoliceExamStartButton } = require('./policeExamStartButton');
-const { handlePoliceExamAnswerButton } = require('./policeExamAnswerButton');
-const { handleWrdExamStartButton } = require('./wrdExamStartButton');
-const { handleWrdExamAnswerButton } = require('./wrdExamAnswerButton');
 const { handleHouseStartButton } = require('./houseStartButton');
 const { handleHouseCategorySelect } = require('./houseCategorySelect');
 const { handleHouseModal } = require('./houseModal');
@@ -63,10 +59,6 @@ const {
   MAFIA_SIZE_PREFIX,
   MAFIA_MODAL_PREFIX,
   MAFIA_SEND_PREFIX,
-  POLICE_EXAM_START_PREFIX,
-  POLICE_EXAM_ANSWER_PREFIX,
-  WRD_EXAM_START_PREFIX,
-  WRD_EXAM_ANSWER_PREFIX,
   HOUSE_START_PREFIX,
   HOUSE_CATEGORY_PREFIX,
   HOUSE_MODAL_PREFIX,
@@ -107,10 +99,6 @@ async function routeInteraction(interaction, commands) {
       if (id.startsWith(`${APP_START_PREFIX}:`)) return await handleApplicationStartButton(interaction);
       if (id.startsWith(`${MAFIA_START_PREFIX}:`)) return await handleMafiaStartButton(interaction);
       if (id.startsWith(`${MAFIA_SEND_PREFIX}:`)) return await handleMafiaSendButton(interaction);
-      if (id.startsWith(`${POLICE_EXAM_START_PREFIX}:`)) return await handlePoliceExamStartButton(interaction);
-      if (id.startsWith(`${POLICE_EXAM_ANSWER_PREFIX}:`)) return await handlePoliceExamAnswerButton(interaction);
-      if (id.startsWith(`${WRD_EXAM_START_PREFIX}:`)) return await handleWrdExamStartButton(interaction);
-      if (id.startsWith(`${WRD_EXAM_ANSWER_PREFIX}:`)) return await handleWrdExamAnswerButton(interaction);
       if (id.startsWith(`${HOUSE_START_PREFIX}:`)) return await handleHouseStartButton(interaction);
       if (id.startsWith(`${HOUSE_DETAILS_START_PREFIX}:`)) return await handleHouseDetailsStartButton(interaction);
       if (id.startsWith(`${HOUSE_SEND_PREFIX}:`)) return await handleHouseSendButton(interaction);

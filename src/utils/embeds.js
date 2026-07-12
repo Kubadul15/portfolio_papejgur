@@ -77,14 +77,6 @@ function buildVerificationPanelEmbed(role) {
     .setFooter({ text: config.serverName });
 }
 
-function buildExamQuestionEmbed(question, index, total, score) {
-  return new EmbedBuilder()
-    .setColor(config.embedColor)
-    .setTitle(`Pytanie ${index + 1} / ${total}`)
-    .setDescription(question.question)
-    .setFooter({ text: `Aktualny wynik: ${score}/${index}` });
-}
-
 function getEmbedFieldValue(embed, nameIncludes) {
   const field = embed.fields?.find((f) => f.name.includes(nameIncludes));
   return field ? field.value : 'brak danych';
@@ -351,7 +343,6 @@ module.exports = {
   buildPanelEmbed,
   buildIdCardEmbed,
   buildVerificationPanelEmbed,
-  buildExamQuestionEmbed,
   getEmbedFieldValue,
   buildVehiclePanelEmbed,
   buildVehicleCardEmbed,

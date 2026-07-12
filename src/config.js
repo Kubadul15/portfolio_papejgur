@@ -11,18 +11,13 @@ function requireEnv(name) {
 
 // Domyslnie plik trzymany jest w repo (data/registry.json) - to dziala
 // lokalnie, ale na Railway dysk jest efemeryczny i znika przy kazdym
-// redeployu. Aby rejestr (dowody/prawa jazdy/pojazdy/system policyjny)
-// przetrwal redeploy, trzeba podpiac Railway Volume i ustawic REGISTRY_PATH
-// na sciezke montowania (np. /data/registry.json) - patrz README.
+// redeployu. Aby rejestr (dowody/pojazdy/domy/aukcje) przetrwal redeploy,
+// trzeba podpiac Railway Volume i ustawic REGISTRY_PATH na sciezke
+// montowania (np. /data/registry.json) - patrz README.
 const rawRegistryPath = process.env.REGISTRY_PATH || 'data/registry.json';
 
-// Jedyny serwer bota (Małopolska RP) - domyslna wartosc ponizej mozna
-// nadpisac zmienna POLICE_GUILD_ID, gdyby jednak trzeba bylo rozdzielic
-// system policyjny (/policja) na inny serwer niz reszta bota.
-const policeGuildId = process.env.POLICE_GUILD_ID || '1515306861241565352';
-
-// Odwrotna sytuacja: /robloxban ma dzialac wylacznie na "starym" serwerze
-// (domyslnie ten sam, jedyny serwer, ale mozna nadpisac osobno).
+// /robloxban ma dzialac wylacznie na tym, skonfigurowanym serwerze
+// (domyslnie jedyny serwer bota, ale mozna nadpisac osobno).
 const legacyGuildId = process.env.LEGACY_GUILD_ID || '1515306861241565352';
 
 // Kanal, na ktory /robloxban wysyla embed z banem - mozna nadpisac
@@ -45,18 +40,14 @@ const houseAuctionAdminRoleId = process.env.HOUSE_AUCTION_ADMIN_ROLE_ID || '1523
 // GUILD_ID moze byc jednym ID albo lista ID rozdzielona przecinkami, jesli
 // bot ma dzialac (i miec zarejestrowane slash commands) na wiecej niz jednym
 // serwerze - patrz deploy-commands.js, ktore rejestruje komendy na kazdym
-// z nich osobno. Domyslnie jest to jedyny serwer bota (Małopolska RP);
-// policeGuildId jest zawsze dolaczany do tej listy na sztywno, zeby
-// literowka albo pominiecie go w GUILD_ID na Railway nie zostawily tego
-// serwera bez zarejestrowanych komend.
+// z nich osobno. Domyslnie jest to jedyny serwer bota (Małopolska RP).
 const guildIds = Array.from(
-  new Set([
-    ...(process.env.GUILD_ID || '1515306861241565352')
+  new Set(
+    (process.env.GUILD_ID || '1515306861241565352')
       .split(',')
       .map((id) => id.trim())
-      .filter(Boolean),
-    policeGuildId,
-  ])
+      .filter(Boolean)
+  )
 );
 
 module.exports = {
@@ -71,7 +62,6 @@ module.exports = {
   // Opcjonalny - jesli nie ustawiony, logowanie administracyjne jest pomijane.
   adminLogChannelId: process.env.ADMIN_LOG_CHANNEL_ID || null,
   registryPath: path.isAbsolute(rawRegistryPath) ? rawRegistryPath : path.join(__dirname, '..', rawRegistryPath),
-  policeGuildId,
   legacyGuildId,
   robloxBanChannelId,
   roleplaySessionCode,

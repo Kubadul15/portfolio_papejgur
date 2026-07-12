@@ -2,7 +2,6 @@ const fs = require('fs');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const config = require('./config');
 const panelCommand = require('./commands/panel');
-const policjaCommand = require('./commands/policja');
 const robloxbanCommand = require('./commands/robloxban');
 const roleplayCommand = require('./commands/roleplay');
 const { routeInteraction } = require('./interactions');
@@ -13,7 +12,6 @@ const client = new Client({
 
 const commands = new Collection();
 commands.set(panelCommand.data.name, panelCommand);
-commands.set(policjaCommand.data.name, policjaCommand);
 commands.set(robloxbanCommand.data.name, robloxbanCommand);
 commands.set(roleplayCommand.data.name, roleplayCommand);
 

@@ -30,8 +30,7 @@ module.exports = {
     .addStringOption((o) => o.setName('powod').setDescription('Powód bana').setRequired(true)),
 
   async execute(interaction) {
-    // Ten serwer dostal komende /policja - /robloxban ma dzialac odwrotnie,
-    // tylko na "starym" serwerze sprzed dodania serwera policyjnego.
+    // /robloxban dziala wylacznie na tym, skonfigurowanym serwerze.
     if (interaction.guildId !== config.legacyGuildId) {
       await interaction.reply({ content: '❌ Ta komenda jest dostępna tylko na tym serwerze.', ephemeral: true });
       return;
